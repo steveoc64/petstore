@@ -10,13 +10,13 @@ test:
 	go test ./...
 
 
-build: generate test
+build: test
 	go build
 
 run: build
 	RPC_PORT=8081 REST_PORT=8080 API_KEY=ABC123 ./petstore
 
-docker: generate test
+docker: test
 	mkdir -p tmp-docker
 	cp Dockerfile tmp-docker
 	GOOS=linux GOARCH=amd64 go build -o tmp-docker/entrypoint

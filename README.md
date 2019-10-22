@@ -16,13 +16,15 @@
 There is a makefile provided to run development tasks easily.  It assumes that
 you are running on a Unix-like system (Mac / Linux / BSD, etc)
 
-- `make` runs tests, code generators, builds the code and builds the docker container
+- `make` runs tests, builds the code and builds the docker container. 
 
-- `make generate` to execute any code generators needed
 - `make test` to run tests
 - `make build` to build the application
 - `make run` to build and run locally from the command line
 - `make docker` to build the docker container
+
+- `make generate` to re-generate protobuf glue code, should the protobufs change
+(requires the protobuf/grpc/grpc-gateway tools to be installed and configured)
 
 ## Design Decisions - Architecture
 
