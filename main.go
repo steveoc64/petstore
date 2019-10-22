@@ -5,7 +5,7 @@ import "github.com/sirupsen/logrus"
 func main() {
 
 	log := logrus.New()
-	//log.SetFormatter(&log.JSONFormatter{})
+	log.SetReportCaller(true)
 	log.Print("Starting Petstore")
 
 }
