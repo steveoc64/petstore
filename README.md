@@ -11,6 +11,18 @@
 - Include Docker build files / build docker container / test vs docker container
 - Show decisions / commit often
 
+## Using the makefile
+
+There is a makefile provided to run development tasks easily.  It assumes that
+you are running on a Unix-like system (Mac / Linux / BSD, etc)
+
+- `make` runs tests, code generators, builds the code and builds the docker container
+
+- `make generate` to execute code generators
+- `make test` to run tests
+- `make build` to build the application
+- `make docker` to build the docker container
+
 ## Design Decisions - Architecture
 
 The swagger specification defines a number of REST endpoints that need to be delivered,
@@ -37,7 +49,7 @@ Having said that, there is really good scope for automating this workflow using 
 the shelf tools.
 
 Using gRPC + protobuf, we can setup a toolchain that enables changes to the Swagger API 
-spec to apply some automation to the Go code.
+spec to apply some automation to both the protobuf definitions and the Go code.
 
 It is also possible to go the other way, so use protobufs and rpc definitions to 
 describe the project, and then generate swagger / OpenAPI from that. 
@@ -54,7 +66,7 @@ as a base to build some custom code generation tooling from.
 
 Sounds like fun, but is out of scope for this project.
 
-## Data Storage - Flexible approach
+## Design Decisions - Data Storage
 
 There is no explicit requirement to implement persistent storage as part of the
 microservice. However, it needs some form of storage to function (so that inserts and updates 
@@ -75,6 +87,17 @@ extra work.
 
 For the container running the petstore, the driver and DSN details can set using ENV vars.
 
+## Design Decisions - Docker
 
+There are a LOT of different options when building a docker container, from 
+
+I have chosen a very simple and efficient setup with this project:
+
+- The Go binary, being statically linked, is the only object in the container.
+- The binary is named `entrypoint` in the container
+- To build the container, create a temp dir to place the contents in, and build from there
+- Set GOOS and GOARCH when building the entrypoint as the developer may be using something other
+than a linux box
+- All runtime parameters are to be passed through using ENV vars in the docker container
 
 
