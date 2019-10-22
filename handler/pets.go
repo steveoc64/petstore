@@ -24,7 +24,7 @@ func (s *PetstoreServer) GetPetByID(ctx context.Context, req *pb.GetByIDRequest)
 			Id:   1,
 			Name: "cat",
 		},
-		Name:      fmt.Printf("Pet number %v", req.Id),
+		Name:      fmt.Sprintf("Pet number %v", req.Id),
 		PhotoUrls: nil,
 		Tags: []*pb.Tag{
 			&pb.Tag{
