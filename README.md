@@ -35,7 +35,8 @@ Benefits of using gRPC for this Microservice :
 
 - End result is callable from both REST and RPC
 - Use of protobufs applies a layer of validation and control
-- End result is easier to change as requirements change
+- End result is easier to change as requirements change, as the protobuf and rpc definitions
+are in 1 place, and should align with the swagger API definition.
 - End result can be more testable than hand written REST calls using a pure web framework
 
 ## Design Decisions - Tools
