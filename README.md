@@ -123,4 +123,9 @@ I have chosen the minimalist approach with this project:
 than a linux box
 - All runtime parameters are to be passed through using ENV vars in the docker container
 
+## Misc Code Style Notes
 
+- Interfaces.  Defined at the consumer end, and used as input params. Avoid writing code that returns an interface
+wherevere practical.
+- Errors. Either - return them, or log them and handle in line.  Dont do both.
+- Comments. Follow lint recommendations. Add a doc.go file to annotate `go doc` results.
