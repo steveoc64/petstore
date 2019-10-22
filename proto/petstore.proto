@@ -32,5 +32,5 @@ message Pet {
     string name = 3;
     repeated string photo_urls = 4;
     repeated Tag tags = 5;
-    Status status = 6;
+    string status = 6;
 }

@@ -13,6 +13,9 @@ test:
 build: generate test
 	go build
 
+run: build
+	RPC_PORT=8081 REST_PORT=8080 API_KEY=ABC123 ./petstore
+
 docker: generate test
 	mkdir -p tmp-docker
 	cp Dockerfile tmp-docker
