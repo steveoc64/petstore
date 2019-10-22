@@ -18,9 +18,10 @@ you are running on a Unix-like system (Mac / Linux / BSD, etc)
 
 - `make` runs tests, code generators, builds the code and builds the docker container
 
-- `make generate` to execute code generators
+- `make generate` to execute any code generators needed
 - `make test` to run tests
 - `make build` to build the application
+- `make run` to build and run locally from the command line
 - `make docker` to build the docker container
 
 ## Design Decisions - Architecture
@@ -39,12 +40,32 @@ Benefits of using gRPC for this Microservice :
 are in 1 place, and should align with the swagger API definition.
 - End result can be more testable than hand written REST calls using a pure web framework
 
+## Critical Files to look at to implement API changes
+
+The core files that encode the API, and therefore need to be changed
+if the API changes are as follows :
+
+- `proto/petstore.proto` Formal definitions of the models and parameters, defined in 1 place. The following `proto/petstore.pb.*` 
+are generated code that need to be re-generated each time the protobuf file is altered. (see `make generate`)
+- `proto/rest.yaml` This file defines the connection between the REST endpoints and the Go objects
+- `handler/pets.go` The code for each of the endpoints in the "pets" range. 1 endpoint = 1 function
+- `handler/pets_test.go` The test code for each of the endpoints in the "pets" range. 1 endpoint = 1 test
+
+Other files such as `main.go`, `handler/petstore.go` defines the handler, sets the storage interface, and sets 
+up all the network listeners.  This is common / boilerplate code, and need not be changed as the API
+changes.
+
+Likewise, the full end-to-end test case in `handler/petstore_test.go` provides test coverage for actually
+spinning up the RPC and REST handlers, so does not need attention if the API expands.
+
 ## Design Decisions - Tools
 
 For the purpose of this exersize, I will avoid the use of code generation tools
 and write the implementations manually. I think that is the best way to get a result
 out in the given timeframe, and demonstrate a good understanding of the basic principles
 at the same time.
+
+The exception here being the protobuf generator, to create the 
 
 Having said that, there is really good scope for automating this workflow using off 
 the shelf tools.
@@ -90,11 +111,12 @@ For the container running the petstore, the driver and DSN details can set using
 
 ## Design Decisions - Docker
 
-There are a LOT of different options when building a docker container, from 
+There are a LOT of different options when building a docker container, from including a full OS
+and building the app inside the container, through to a minimalist container. 
 
-I have chosen a very simple and efficient setup with this project:
+I have chosen the minimalist approach with this project:
 
-- The Go binary, being statically linked, is the only object in the container.
+- The Go binary, being statically linked, is the only object needed in the container
 - The binary is named `entrypoint` in the container
 - To build the container, create a temp dir to place the contents in, and build from there
 - Set GOOS and GOARCH when building the entrypoint as the developer may be using something other

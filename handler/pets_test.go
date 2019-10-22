@@ -10,11 +10,12 @@ import (
 )
 
 const (
-	testRpcPort  = 8081
-	testRestPort = 8080
+	testRestPort = 8082
+	testRpcPort  = 8083
 	testAPIKey   = "ABC123"
 )
 
+// TestGetPetByID provides full test coverage for the GetPetByID call
 func TestGetPetByID(t *testing.T) {
 	t.Log("Testing GetPetByID")
 

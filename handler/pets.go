@@ -15,7 +15,7 @@ func (s *PetstoreServer) GetPetByID(ctx context.Context, req *pb.GetByIDRequest)
 		"id": req.Id,
 	}).Info("GetPetByID")
 
-	// TODO - get pet using the storace interface
+	// TODO - get pet using the storage interface
 
 	// lets hardcode one for now
 	return &pb.Pet{
