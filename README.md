@@ -60,15 +60,25 @@ spinning up the RPC and REST handlers, so does not need attention if the API exp
 
 ## Design Decisions - Tools
 
-For the purpose of this exersize, I will avoid the use of code generation tools
+Due to the use of gRPC/Protobuf, I am using the standard protobuf generators, to create the intermediate files to 
+connect handler code to protobuf definitions and REST/JSON conversion.
+
+The generated files in this case are committed as part of the repository:
+- `proto/petstore.pb.go`
+- `proto/petstore.pb.gw.go`
+
+If the API changes, or there are changes needed to the protobuf file, then the developer
+must install the protobuf tools, grpc generator, and grpc gateway tools, as described here :
+https://github.com/grpc-ecosystem/grpc-gateway
+
+## Notes on out of scope possibilities with more code generation
+
+For the purpose of this exersize, I will avoid the use of any additional code generation tools
 and write the implementations manually. I think that is the best way to get a result
 out in the given timeframe, and demonstrate a good understanding of the basic principles
 at the same time.
 
-The exception here being the protobuf generator, to create the 
-
-Having said that, there is really good scope for automating this workflow using off 
-the shelf tools.
+There is the possibility of further automating this workflow using off the shelf tools.
 
 Using gRPC + protobuf, we can setup a toolchain that enables changes to the Swagger API 
 spec to apply some automation to both the protobuf definitions and the Go code.
