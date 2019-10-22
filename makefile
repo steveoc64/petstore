@@ -1,7 +1,7 @@
 all: build
 
 generate:
-	protoc -I proto proto/petstore.proto --go_out=plugins=grpc:proto
+	$(MAKE) -C proto
 
 test:
 	ineffassign .

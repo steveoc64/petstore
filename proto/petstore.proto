@@ -1,8 +1,9 @@
 syntax = "proto3";
 package petstore;
+import "google/api/annotations.proto";
 
 service PetstoreService {
-    rpc GetPetByID(GetByIDRequest) returns (Pet);
+    rpc GetPetByID(GetByIDRequest) returns (Pet) {};
 }
 
 message Category {

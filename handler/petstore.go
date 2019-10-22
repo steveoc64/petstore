@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"os"
-	"strconv"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/sirupsen/logrus"
@@ -30,50 +28,39 @@ func NewPetstoreServer(log *logrus.Logger, rcpPort, restPort int, apiKey string)
 	}
 }
 
-func (s *PetstoreServer) grpcRun(log *logrus.Logger) {
-
+func (s *PetstoreServer) grpcRun() {
 	endpoint := fmt.Sprintf(":%d", s.rpcPort)
 	lis, err := net.Listen("tcp", endpoint)
 	if err != nil {
-		log.WithError(err).Fatal("failed to listen")
+		s.log.WithError(err).Fatal("failed to listen")
 	}
 	grpcServer := grpc.NewServer()
-	pb.RegisterPetstoreServiceServer(grpcServer, &petStoreServer{})
+	pb.RegisterPetstoreServiceServer(grpcServer, s)
 
-	log.WithFields(logrus.Fields{
-		"port":     port,
+	s.log.WithFields(logrus.Fields{
+		"port":     s.rpcPort,
 		"endpoint": endpoint,
 	}).Println("Serving gRPC")
 
 	grpcServer.Serve(lis)
 }
 
-func rpcProxy(log *logrus.Logger) error {
-	var (
-		port int
-		err  error
-	)
-
-	port, err = strconv.Atoi(os.Getenv("REST_PORT"))
-	if err != nil {
-		port = defaultRestPort
-		log.Error("Missing REST_PORT")
-	}
+func (s *PetstoreServer) rpcProxy() error {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithInsecure()}
-	rpcendpoint := fmt.Sprintf(":%d", s.port)
-	webendpoint := fmt.Sprintf(":%d", s.web)
-	err := rp.RegisterGameServiceHandlerFromEndpoint(ctx, mux, rpcendpoint, opts)
+	rpcendpoint := fmt.Sprintf(":%d", s.rpcPort)
+	webendpoint := fmt.Sprintf(":%d", s.restPort)
+	err := pb.RegisterPetstoreServiceServer(ctx, mux, rpcendpoint, opts)
 	if err != nil {
 		return err
 	}
 
 	s.log.WithFields(logrus.Fields{
-		"port":     s.web,
+		"port":     s.restPort,
 		"endpoint": webendpoint,
 	}).Println("Serving REST Proxy")
 	return http.ListenAndServe(webendpoint, mux)
