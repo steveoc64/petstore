@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/steveoc64/petstore/handler"
 	"os"
 	"strconv"
+
+	"github.com/steveoc64/petstore/handler"
 
 	"github.com/sirupsen/logrus"
 )
@@ -37,7 +38,8 @@ func main() {
 		restPort = defaultRestPort
 		log.Error("Missing REST_PORT")
 	}
-	apiKey = os.Getenv("API_KEY"))
+	apiKey = os.Getenv("API_KEY")
 
-	petstore := handler.NewPetstoreServer(log, rpcPort, restPort)
+	petstore := handler.NewPetstoreServer(log, rpcPort, restPort, apiKey)
+	petstore.Run()
 }

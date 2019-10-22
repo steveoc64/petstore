@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+// PetstoreServer implements the RPC and REST server
 type PetstoreServer struct {
 	log      *logrus.Logger
 	rpcPort  int
@@ -19,6 +20,7 @@ type PetstoreServer struct {
 	apiKey   string
 }
 
+// NewPetstoreServer returns a new PetstoreServer
 func NewPetstoreServer(log *logrus.Logger, rcpPort, restPort int, apiKey string) *PetstoreServer {
 	return &PetstoreServer{
 		log:      log,
@@ -28,6 +30,15 @@ func NewPetstoreServer(log *logrus.Logger, rcpPort, restPort int, apiKey string)
 	}
 }
 
+// Run starts and runs the server
+func (s *PetstoreServer) Run() {
+	s.log.WithField("API_KEY", s.apiKey).Print("Petstore Start Run")
+	go s.rpcProxy()
+	s.grpcRun()
+}
+
+// grpcRun runs the RPC server
+// Looks ugly, but its just common boilerplate that would normally be in a lib
 func (s *PetstoreServer) grpcRun() {
 	endpoint := fmt.Sprintf(":%d", s.rpcPort)
 	lis, err := net.Listen("tcp", endpoint)
@@ -45,6 +56,8 @@ func (s *PetstoreServer) grpcRun() {
 	grpcServer.Serve(lis)
 }
 
+// rpcProxy hooks up the REST endpoints.
+// Looks ugly, but its just common boilerplate that would normally be in a lib
 func (s *PetstoreServer) rpcProxy() error {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
@@ -54,7 +67,7 @@ func (s *PetstoreServer) rpcProxy() error {
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	rpcendpoint := fmt.Sprintf(":%d", s.rpcPort)
 	webendpoint := fmt.Sprintf(":%d", s.restPort)
-	err := pb.RegisterPetstoreServiceServer(ctx, mux, rpcendpoint, opts)
+	err := pb.RegisterPetstoreServiceHandlerFromEndpoint(ctx, mux, rpcendpoint, opts)
 	if err != nil {
 		return err
 	}
