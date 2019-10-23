@@ -2,7 +2,6 @@ package testdb
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -21,19 +20,19 @@ func NewTestDB() *TestDB {
 	for v := range []int{1, 2, 3, 4, 5} {
 		i := int64(v)
 		db.Pets[i] = &pb.Pet{
-			Id: i,
+			PetId: i,
 			Category: &pb.Category{
 				Id:   1,
 				Name: "dog",
 			},
 			Name:      fmt.Sprintf("Pet number %d", i),
-			PhotoUrls: []string,
+			PhotoUrls: []string{"photos/234.jpg", "photos/345.jpg"},
 			Tags: []*pb.Tag{
-				&pb.Tag{
+				{
 					Id:   1,
 					Name: "housetrained",
 				},
-				&pb.Tag{
+				{
 					Id:   2,
 					Name: "good-with-kids",
 				},
@@ -57,7 +56,7 @@ func (db *TestDB) GetPetByID(ctx context.Context, id int64) (*pb.Pet, error) {
 	return pet, nil
 }
 
-// UpdatePet upadates the name and status of a pet
+// UpdatePet updates the name and status of a pet
 func (db *TestDB) UpdatePet(ctx context.Context, id int64, name string, status string) error {
 	db.Lock()
 	db.Unlock()
@@ -78,12 +77,13 @@ func (db *TestDB) UpdatePet(ctx context.Context, id int64, name string, status s
 func (db *TestDB) AddPet(ctx context.Context, pet *pb.Pet) error {
 	db.Lock()
 	defer db.Unlock()
-	if pet.Id == 0 {
-		return errors.New("405:Pet ID 0 is invalid")
+	// If the PetID is not specified, use an auto-increment
+	if pet.PetId == 0 {
+		pet.PetId = int64(len(db.Pets) + 1)
 	}
-	if _, ok := db.Pets[pet.Id]; ok {
-		return fmt.Errorf("405:Pet already exists %d", pet.Id)
+	if _, ok := db.Pets[pet.PetId]; ok {
+		return fmt.Errorf("405:Pet already exists %d", pet.PetId)
 	}
-	db.Pets[pet.Id] = pet
+	db.Pets[pet.PetId] = pet
 	return nil
 }

@@ -64,15 +64,12 @@ func (db *MysqlDB) UpdatePet(ctx context.Context, id int64, name string, status 
 func (db *MysqlDB) AddPet(ctx context.Context, pet *pb.Pet) error {
 	db.Lock()
 	defer db.Unlock()
-	if pet.Id == 0 {
-		return errors.New("405:Pet ID 0 is invalid")
-	}
-	count := 0
-	if err := db.sql.Select(&count, "select count(*) from pets where id=$1", pet.Id); err != nil {
+	var count int
+	if err := db.sql.Select(&count, "select count(*) from pets where id=$1", pet.PetId); err != nil {
 		return err
 	}
 	if count == 1 {
-		return fmt.Errorf("405:Pet already exists %d", pet.Id)
+		return fmt.Errorf("405:Pet already exists %d", pet.PetId)
 	}
 
 	// TODO - full and correct SQL for mapping the pet the the various DB tables

@@ -4,9 +4,22 @@ config_version: 3
 http:
   rules:
     - selector: petstore.PetstoreService.GetPetByID
-      get: /pet/{id}
-    - selector: petstore.PetstoreService.UpdatePet
-      post: /pet/{id}
+      get: /pet/{pet_id}
+    - selector: petstore.PetstoreService.UpdatePetWithForm
+      post: /pet/{pet_id}
+      body: "*"
+    - selector: petstore.PetstoreService.DeletePet
+      delete: /pet/{pet_id}
+    - selector: petstore.PetstoreService.UploadFile
+      post: /pet/{pet_id}/uploadImage
+      body: "*"
     - selector: petstore.PetstoreService.AddPet
       post: /pet
+      body: "*"
+    - selector: petstore.PetstoreService.UpdatePet
+      put: /pet
+      body: "*"
+    - selector: petstore.PetstoreService.FindPetsByStatus
+      get: /pet/findByStatus/{status}
+
 

@@ -2,7 +2,6 @@ package memory
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -53,12 +52,13 @@ func (db *MemoryDB) UpdatePet(ctx context.Context, id int64, name string, status
 func (db *MemoryDB) AddPet(ctx context.Context, pet *pb.Pet) error {
 	db.Lock()
 	defer db.Unlock()
-	if pet.Id == 0 {
-		return errors.New("405:Pet ID 0 is invalid")
+	// If the PetID is not specified, use an auto-increment
+	if pet.PetId == 0 {
+		pet.PetId = int64(len(db.Pets) + 1)
 	}
-	if _, ok := db.Pets[pet.Id]; ok {
-		return fmt.Errorf("405:Pet already exists %d", pet.Id)
+	if _, ok := db.Pets[pet.PetId]; ok {
+		return fmt.Errorf("405:Pet already exists %d", pet.PetId)
 	}
-	db.Pets[pet.Id] = pet
+	db.Pets[pet.PetId] = pet
 	return nil
 }
