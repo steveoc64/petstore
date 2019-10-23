@@ -2,8 +2,7 @@
 echo USAGE: ./add_pet.sh ID NAME CATEGORY
 echo Adding Pet $1 with name $2 of category $3
 
-curl POST "localhost:8080/pet" \
-  -v \
+curl -v -X POST "localhost:8080/pet" \
   -H  "accept: application/json" \
   -H  "Content-Type: application/json" \
   -d "{\"id\": ${1}, \

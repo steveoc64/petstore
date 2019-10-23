@@ -50,8 +50,8 @@ func (s *PetstoreServer) AddPet(ctx context.Context, req *pb.Pet) (*pb.Pet, erro
 	}).Info("Adding pet")
 	if req.Id == 0 {
 		grpc.SendHeader(ctx, metadata.MD{
-			"foo":        "foo",
-			"statuscode": "405",
+			"foo":        []string{"foo"},
+			"statuscode": []string{"405"},
 		})
 		return nil, fmt.Errorf("405:Invalid ID 0")
 	}

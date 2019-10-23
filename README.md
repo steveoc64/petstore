@@ -50,8 +50,6 @@ There are some utility curl scripts in the `./scripts` directory
 - `update_pet.sh` ID NAME STATUS << to update a pet
 - `delete_pet.sh` API_KEY ID << to delete a pet.  The API_KEY must match the service's key. Default is ABC123
 
-
-
 ## Design Decisions - Architecture
 
 The swagger specification defines a number of REST endpoints that need to be delivered,
@@ -66,7 +64,22 @@ Benefits of using gRPC for this Microservice :
 - Use of protobufs applies a layer of validation and control
 - End result is easier to change as requirements change, as the protobuf and rpc definitions
 are in 1 place, and should align with the swagger API definition.
-- End result can be more testable than hand written REST calls using a pure web framework
+- Adding RPC support provides a more efficient means of communicating between services
+without the need to exersize REST endpoints and JSON marshalling.
+- End result is easier to test compared to REST calls using a pure web framework.
+
+## Design Decisions - Tools
+
+Due to the use of gRPC/Protobuf, I am using the standard protobuf generators, to create the intermediate files to 
+connect handler code to protobuf definitions and REST/JSON conversion.
+
+The generated files in this case are committed as part of the repository:
+- `proto/petstore.pb.go`
+- `proto/petstore.pb.gw.go`
+
+If the API changes, or there are changes needed to the protobuf file, then the developer
+must install the protobuf tools, grpc generator, and grpc gateway tools, as described here :
+https://github.com/grpc-ecosystem/grpc-gateway
 
 ## Critical Files to look at to implement API changes
 
@@ -85,19 +98,6 @@ changes.
 
 Likewise, the full end-to-end test case in `handler/petstore_test.go` provides test coverage for actually
 spinning up the RPC and REST handlers, so does not need attention if the API expands.
-
-## Design Decisions - Tools
-
-Due to the use of gRPC/Protobuf, I am using the standard protobuf generators, to create the intermediate files to 
-connect handler code to protobuf definitions and REST/JSON conversion.
-
-The generated files in this case are committed as part of the repository:
-- `proto/petstore.pb.go`
-- `proto/petstore.pb.gw.go`
-
-If the API changes, or there are changes needed to the protobuf file, then the developer
-must install the protobuf tools, grpc generator, and grpc gateway tools, as described here :
-https://github.com/grpc-ecosystem/grpc-gateway
 
 ## Notes on out of scope possibilities with more code generation
 
@@ -135,17 +135,19 @@ create some data that can be exersized by the get calls)
 In a production environment where this Microservice is deployed, there may be a shared SQL
 instance that is used for the storage, or there may be some other means.
 
-So, I will define a storage interface as part of the petstore, and implement an 'in memory' 
-storage that can be used.  This would assist in making the Microservice testable without the
-need to mount dependent services (such as a Database)
+This code includes the following pluggable database drivers:
 
-In addition to the 'in memory' storage implementation, I will also implement an SQL storage
-class that connects to another container to do the IO.
-
-This only needs to be done to cover 1 API endpoint for this exersize, so shouldnt be too much
-extra work.
+- `memory` for in-memory data storage with no persistence 
+- `mysql` for connecting to a mysql database
+- `testdb` for an in-memory data storage with seeded data for running test cases
 
 For the container running the petstore, the driver and DSN details can set using ENV vars.
+
+
+eg - run the program with
+`DATABASE=MEMORY ./petstore`  runs up the service, using an empty in-memory DB
+
+`DATABASE=TESTDB ./petstore`  runs up the service, using an in-memory DB with half a dozen pets seeded
 
 ## Design Decisions - Docker
 
@@ -164,9 +166,44 @@ than a linux box
 ## Misc Code Style Notes
 
 - Interfaces.  Defined at the consumer end, and used as input params. Avoid writing code that returns an interface
-wherevere practical.
+wherever practical.
 - Errors. Either - return them, or log them and handle in line.  Dont do both.
 - Comments. Follow lint recommendations. Add a doc.go file to annotate `go doc` results.
+
+## Tech Debt - XML Output
+
+The current code base outputs JSON encoding only, I have not implemented XML output yet.  The Swagger API
+spec denotes that both should be supported to fully implement the API.
+
+It should be a simple matter of adding the encoder to the HTTPMux, but I havent had time to investigate
+this yet.
+
+## Tech Debt - Photo URLs and photo storage
+
+Looking at the model for the Photo URLs attached to the Pet, it wasnt clear what the structure is 
+meant to be. Would need to clarify that with the product owner.
+
+Im seeing this :
+
+```
+	[
+xml: OrderedMap { "wrapped": true }
+string
+xml: OrderedMap { "name": "photoUrl" }
+xml:
+   name: photoUrl]
+```
+
+For the sake of simplicity, I am implementing the PhotoURLs is a simple []string{} against the pet.
+
+If a more complex structure is needed (map[string]somePhotoStruct ??), then its easy enough to change.
+
+I have not implemented a persistent storage mechanism for the image data inside the petstore microservice.
+
+In a real application, would decouple that storage entirely, so that the actual images would be stored
+in a separate service (AWS S3, etc).  Depending on how that is done, that would drive how the PhotoURLs
+would look.
+
 
 ## Tech Debt / TODO
 

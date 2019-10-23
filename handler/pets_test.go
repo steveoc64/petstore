@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/steveoc64/petstore/database/testdb"
+
 	"github.com/sirupsen/logrus"
 	pb "github.com/steveoc64/petstore/proto"
 )
@@ -19,11 +21,11 @@ const (
 func TestGetPetByID(t *testing.T) {
 	t.Log("Testing GetPetByID")
 
-	petServer := NewPetstoreServer(logrus.New(), testRpcPort, testRestPort, testAPIKey)
+	petServer := NewPetstoreServer(logrus.New(), testdb.NewTestDB(), testRpcPort, testRestPort, testAPIKey)
 
 	for i := range []int{1, 2, 3, 4, 5} {
 		v := int64(i)
-		pet, err := petServer.GetPetByID(context.TODO(), &pb.GetByIDRequest{
+		pet, err := petServer.GetPetByID(context.TODO(), &pb.ID{
 			Id: v,
 		})
 		if err != nil {

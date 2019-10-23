@@ -4,11 +4,11 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/steveoc64/petstore/database"
-
-	"github.com/steveoc64/petstore/handler"
-
 	"github.com/sirupsen/logrus"
+	"github.com/steveoc64/petstore/database/memory"
+	"github.com/steveoc64/petstore/database/mysql"
+	"github.com/steveoc64/petstore/database/testdb"
+	"github.com/steveoc64/petstore/handler"
 )
 
 const (
@@ -46,12 +46,16 @@ func main() {
 	dbname := os.Getenv("DATABASE")
 	switch dbname {
 	case "MEMORY":
-		db = database.NewMemoryDB()
+		db = memory.NewMemoryDB()
+	case "TESTDB":
+		db = testdb.NewTestDB()
 	case "MYSQL":
+		db, err = mysql.NewMysqlDB(log, os.Getenv("DSN"))
 	default:
-		log.Errorf("Invalid DATABASE value %#v, using in-memory DB", dbname)
-		db = database.NewMemoryDB()
+		log.Errorf("Invalid DATABASE value %#v", dbname)
+		db = memory.NewMemoryDB()
 	}
+	log.WithField("database", dbname).Info("Connected to DB")
 
 	petstore := handler.NewPetstoreServer(log, db, rpcPort, restPort, apiKey)
 	petstore.Run()

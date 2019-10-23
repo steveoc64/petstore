@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/steveoc64/petstore/database/testdb"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,7 +16,7 @@ import (
 // across HTTP.  Provides test coverage for the full round trip, does not needed to be
 // extended if the API changes
 func TestPetstoreHTTP(t *testing.T) {
-	petServer := NewPetstoreServer(logrus.New(), testRpcPort, testRestPort, testAPIKey)
+	petServer := NewPetstoreServer(logrus.New(), testdb.NewTestDB(), testRpcPort, testRestPort, testAPIKey)
 
 	t.Log("Testing Running the RPC/REST Listener - mini integration test")
 	go petServer.Run()

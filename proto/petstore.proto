@@ -4,8 +4,12 @@ import "google/api/annotations.proto";
 
 service PetstoreService {
     rpc GetPetByID(ID) returns (Pet) {};
-    rpc UpdatePet(UpdatePetRequest) returns (Empty) {};
-    rpc AddPet(Pet) returns (Pet) {};
+    rpc UpdatePetWithForm(UpdatePetWithFormReq) returns (Empty) {};
+    rpc DeletePet(DeletePetReq) returns (Empty) {};
+    rpc UploadFile(UploadFileReq) returns (Empty) {};
+    rpc AddPet(Pet) returns (Empty) {};
+    rpc UpdatePet(Pet) returns (Empty) {};
+    rpc FindPetsByStatus(StatusReq) returns (Pets) {};
 }
 
 message Empty {}
@@ -39,7 +43,7 @@ message Pet {
     string status = 6;
 }
 
-message UpdatePetRequest {
+message UpdatePetWithFormReq {
     int64 id = 1;
     string name = 2;
     string status = 3;
