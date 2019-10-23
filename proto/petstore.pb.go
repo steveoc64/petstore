@@ -53,8 +53,39 @@ func (Status) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_749e5a3d28fcc1b1, []int{0}
 }
 
+type Empty struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Empty) Reset()         { *m = Empty{} }
+func (m *Empty) String() string { return proto.CompactTextString(m) }
+func (*Empty) ProtoMessage()    {}
+func (*Empty) Descriptor() ([]byte, []int) {
+	return fileDescriptor_749e5a3d28fcc1b1, []int{0}
+}
+
+func (m *Empty) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Empty.Unmarshal(m, b)
+}
+func (m *Empty) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Empty.Marshal(b, m, deterministic)
+}
+func (m *Empty) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Empty.Merge(m, src)
+}
+func (m *Empty) XXX_Size() int {
+	return xxx_messageInfo_Empty.Size(m)
+}
+func (m *Empty) XXX_DiscardUnknown() {
+	xxx_messageInfo_Empty.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Empty proto.InternalMessageInfo
+
 type Category struct {
-	Id                   int32    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -65,7 +96,7 @@ func (m *Category) Reset()         { *m = Category{} }
 func (m *Category) String() string { return proto.CompactTextString(m) }
 func (*Category) ProtoMessage()    {}
 func (*Category) Descriptor() ([]byte, []int) {
-	return fileDescriptor_749e5a3d28fcc1b1, []int{0}
+	return fileDescriptor_749e5a3d28fcc1b1, []int{1}
 }
 
 func (m *Category) XXX_Unmarshal(b []byte) error {
@@ -86,7 +117,7 @@ func (m *Category) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Category proto.InternalMessageInfo
 
-func (m *Category) GetId() int32 {
+func (m *Category) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
@@ -101,7 +132,7 @@ func (m *Category) GetName() string {
 }
 
 type Tag struct {
-	Id                   int32    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -112,7 +143,7 @@ func (m *Tag) Reset()         { *m = Tag{} }
 func (m *Tag) String() string { return proto.CompactTextString(m) }
 func (*Tag) ProtoMessage()    {}
 func (*Tag) Descriptor() ([]byte, []int) {
-	return fileDescriptor_749e5a3d28fcc1b1, []int{1}
+	return fileDescriptor_749e5a3d28fcc1b1, []int{2}
 }
 
 func (m *Tag) XXX_Unmarshal(b []byte) error {
@@ -133,7 +164,7 @@ func (m *Tag) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Tag proto.InternalMessageInfo
 
-func (m *Tag) GetId() int32 {
+func (m *Tag) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
@@ -147,39 +178,39 @@ func (m *Tag) GetName() string {
 	return ""
 }
 
-type GetByIDRequest struct {
-	Id                   int32    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+type ID struct {
+	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GetByIDRequest) Reset()         { *m = GetByIDRequest{} }
-func (m *GetByIDRequest) String() string { return proto.CompactTextString(m) }
-func (*GetByIDRequest) ProtoMessage()    {}
-func (*GetByIDRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_749e5a3d28fcc1b1, []int{2}
+func (m *ID) Reset()         { *m = ID{} }
+func (m *ID) String() string { return proto.CompactTextString(m) }
+func (*ID) ProtoMessage()    {}
+func (*ID) Descriptor() ([]byte, []int) {
+	return fileDescriptor_749e5a3d28fcc1b1, []int{3}
 }
 
-func (m *GetByIDRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetByIDRequest.Unmarshal(m, b)
+func (m *ID) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ID.Unmarshal(m, b)
 }
-func (m *GetByIDRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetByIDRequest.Marshal(b, m, deterministic)
+func (m *ID) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ID.Marshal(b, m, deterministic)
 }
-func (m *GetByIDRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetByIDRequest.Merge(m, src)
+func (m *ID) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ID.Merge(m, src)
 }
-func (m *GetByIDRequest) XXX_Size() int {
-	return xxx_messageInfo_GetByIDRequest.Size(m)
+func (m *ID) XXX_Size() int {
+	return xxx_messageInfo_ID.Size(m)
 }
-func (m *GetByIDRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetByIDRequest.DiscardUnknown(m)
+func (m *ID) XXX_DiscardUnknown() {
+	xxx_messageInfo_ID.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GetByIDRequest proto.InternalMessageInfo
+var xxx_messageInfo_ID proto.InternalMessageInfo
 
-func (m *GetByIDRequest) GetId() int32 {
+func (m *ID) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
@@ -187,7 +218,7 @@ func (m *GetByIDRequest) GetId() int32 {
 }
 
 type Pet struct {
-	Id                   int32     `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id                   int64     `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Category             *Category `protobuf:"bytes,2,opt,name=category,proto3" json:"category,omitempty"`
 	Name                 string    `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	PhotoUrls            []string  `protobuf:"bytes,4,rep,name=photo_urls,json=photoUrls,proto3" json:"photo_urls,omitempty"`
@@ -202,7 +233,7 @@ func (m *Pet) Reset()         { *m = Pet{} }
 func (m *Pet) String() string { return proto.CompactTextString(m) }
 func (*Pet) ProtoMessage()    {}
 func (*Pet) Descriptor() ([]byte, []int) {
-	return fileDescriptor_749e5a3d28fcc1b1, []int{3}
+	return fileDescriptor_749e5a3d28fcc1b1, []int{4}
 }
 
 func (m *Pet) XXX_Unmarshal(b []byte) error {
@@ -223,7 +254,7 @@ func (m *Pet) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Pet proto.InternalMessageInfo
 
-func (m *Pet) GetId() int32 {
+func (m *Pet) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
@@ -265,38 +296,99 @@ func (m *Pet) GetStatus() string {
 	return ""
 }
 
+type UpdatePetRequest struct {
+	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Status               string   `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *UpdatePetRequest) Reset()         { *m = UpdatePetRequest{} }
+func (m *UpdatePetRequest) String() string { return proto.CompactTextString(m) }
+func (*UpdatePetRequest) ProtoMessage()    {}
+func (*UpdatePetRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_749e5a3d28fcc1b1, []int{5}
+}
+
+func (m *UpdatePetRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpdatePetRequest.Unmarshal(m, b)
+}
+func (m *UpdatePetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpdatePetRequest.Marshal(b, m, deterministic)
+}
+func (m *UpdatePetRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdatePetRequest.Merge(m, src)
+}
+func (m *UpdatePetRequest) XXX_Size() int {
+	return xxx_messageInfo_UpdatePetRequest.Size(m)
+}
+func (m *UpdatePetRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdatePetRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UpdatePetRequest proto.InternalMessageInfo
+
+func (m *UpdatePetRequest) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *UpdatePetRequest) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *UpdatePetRequest) GetStatus() string {
+	if m != nil {
+		return m.Status
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterEnum("petstore.Status", Status_name, Status_value)
+	proto.RegisterType((*Empty)(nil), "petstore.Empty")
 	proto.RegisterType((*Category)(nil), "petstore.Category")
 	proto.RegisterType((*Tag)(nil), "petstore.Tag")
-	proto.RegisterType((*GetByIDRequest)(nil), "petstore.GetByIDRequest")
+	proto.RegisterType((*ID)(nil), "petstore.ID")
 	proto.RegisterType((*Pet)(nil), "petstore.Pet")
+	proto.RegisterType((*UpdatePetRequest)(nil), "petstore.UpdatePetRequest")
 }
 
 func init() { proto.RegisterFile("petstore.proto", fileDescriptor_749e5a3d28fcc1b1) }
 
 var fileDescriptor_749e5a3d28fcc1b1 = []byte{
-	// 315 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0xcb, 0x6b, 0xe3, 0x30,
-	0x10, 0xc6, 0xe3, 0x47, 0xbc, 0xf6, 0x84, 0x64, 0xc3, 0x1c, 0x16, 0x13, 0x76, 0xc1, 0xeb, 0x93,
-	0xdb, 0x83, 0x03, 0xe9, 0xa1, 0xf7, 0xb6, 0x10, 0xda, 0x93, 0x71, 0xd2, 0x73, 0x51, 0xe2, 0x41,
-	0x15, 0xb8, 0x96, 0x6b, 0x4d, 0x02, 0xf9, 0xbb, 0xfa, 0x0f, 0x16, 0x94, 0x57, 0x1f, 0x97, 0xde,
-	0x66, 0x46, 0x9f, 0x7e, 0xdf, 0xa7, 0x11, 0x8c, 0x5a, 0x62, 0xc3, 0xba, 0xa3, 0xbc, 0xed, 0x34,
-	0x6b, 0x0c, 0x8f, 0xfd, 0xe4, 0xaf, 0xd4, 0x5a, 0xd6, 0x34, 0x15, 0xad, 0x9a, 0x8a, 0xa6, 0xd1,
-	0x2c, 0x58, 0xe9, 0xc6, 0xec, 0x75, 0x69, 0x0e, 0xe1, 0xad, 0x60, 0x92, 0xba, 0xdb, 0xe1, 0x08,
-	0x5c, 0x55, 0xc5, 0x4e, 0xe2, 0x64, 0xfd, 0xd2, 0x55, 0x15, 0x22, 0xf8, 0x8d, 0x78, 0xa1, 0xd8,
-	0x4d, 0x9c, 0x2c, 0x2a, 0x6d, 0x9d, 0x5e, 0x80, 0xb7, 0x14, 0xf2, 0x47, 0xd2, 0x04, 0x46, 0x73,
-	0xe2, 0x9b, 0xdd, 0xfd, 0x5d, 0x49, 0xaf, 0x1b, 0x32, 0xfc, 0xf5, 0x56, 0xfa, 0xe6, 0x80, 0x57,
-	0xd0, 0xb7, 0x39, 0xe6, 0x10, 0xae, 0x0f, 0xa1, 0x2c, 0x71, 0x30, 0xc3, 0xfc, 0xf4, 0xbe, 0x63,
-	0xdc, 0xf2, 0xa4, 0x39, 0xb9, 0x7b, 0x67, 0x77, 0xfc, 0x07, 0xd0, 0x3e, 0x6b, 0xd6, 0x4f, 0x9b,
-	0xae, 0x36, 0xb1, 0x9f, 0x78, 0x59, 0x54, 0x46, 0x76, 0xf2, 0xd8, 0xd5, 0x06, 0xff, 0x83, 0xcf,
-	0x42, 0x9a, 0xb8, 0x9f, 0x78, 0xd9, 0x60, 0x36, 0x3c, 0xe3, 0x97, 0x42, 0x96, 0xf6, 0x08, 0xff,
-	0x40, 0x60, 0x58, 0xf0, 0xc6, 0xc4, 0x81, 0xe5, 0x1e, 0xba, 0xcb, 0x1c, 0x82, 0x85, 0xad, 0x70,
-	0x08, 0x91, 0xd8, 0x0a, 0x55, 0x8b, 0x55, 0x4d, 0xe3, 0x1e, 0x0e, 0xe0, 0x57, 0x4b, 0x4d, 0xa5,
-	0x1a, 0x39, 0x76, 0x30, 0x04, 0xdf, 0xe8, 0xba, 0x1a, 0xbb, 0xb3, 0x07, 0xf8, 0x5d, 0x1c, 0xe8,
-	0x0b, 0xea, 0xb6, 0x6a, 0x4d, 0x78, 0x0d, 0x30, 0x27, 0x2e, 0xf6, 0xdb, 0xc1, 0xf8, 0xec, 0xfe,
-	0x79, 0x61, 0x93, 0x0f, 0xb9, 0x0a, 0xe2, 0xb4, 0xb7, 0x0a, 0xec, 0xaf, 0x5d, 0xbd, 0x07, 0x00,
-	0x00, 0xff, 0xff, 0xd5, 0x8a, 0xb7, 0xf6, 0xef, 0x01, 0x00, 0x00,
+	// 370 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0xcf, 0xae, 0x93, 0x50,
+	0x10, 0xc6, 0xcb, 0x9f, 0xcb, 0x85, 0xa9, 0xb7, 0x25, 0x13, 0x63, 0x08, 0xd1, 0x04, 0x59, 0xa1,
+	0x26, 0x34, 0xa9, 0x3b, 0x77, 0x6a, 0x8d, 0xe9, 0xc6, 0x10, 0xda, 0xae, 0xcd, 0x69, 0x99, 0x20,
+	0x09, 0xe5, 0x20, 0x67, 0xda, 0xa4, 0xef, 0xe3, 0x1b, 0xf8, 0x82, 0x46, 0xda, 0x42, 0x6f, 0xbb,
+	0xe9, 0x6e, 0x86, 0xf9, 0xf8, 0xcd, 0xf7, 0x9d, 0x0c, 0x8c, 0x6a, 0x62, 0xc5, 0xb2, 0xa1, 0xb8,
+	0x6e, 0x24, 0x4b, 0xb4, 0xcf, 0xbd, 0xff, 0x3a, 0x97, 0x32, 0x2f, 0x69, 0x22, 0xea, 0x62, 0x22,
+	0xaa, 0x4a, 0xb2, 0xe0, 0x42, 0x56, 0xea, 0xa8, 0x0b, 0x1f, 0xe1, 0xe1, 0xdb, 0xb6, 0xe6, 0x43,
+	0x18, 0x83, 0xfd, 0x55, 0x30, 0xe5, 0xb2, 0x39, 0xe0, 0x08, 0xf4, 0x22, 0xf3, 0xb4, 0x40, 0x8b,
+	0x8c, 0x54, 0x2f, 0x32, 0x44, 0x30, 0x2b, 0xb1, 0x25, 0x4f, 0x0f, 0xb4, 0xc8, 0x49, 0xdb, 0x3a,
+	0x7c, 0x07, 0xc6, 0x52, 0xe4, 0x77, 0x49, 0x5f, 0x82, 0x3e, 0x9f, 0x5d, 0x2b, 0xc3, 0xbf, 0x1a,
+	0x18, 0x09, 0xf1, 0x0d, 0x21, 0x06, 0x7b, 0x73, 0x32, 0xd2, 0x52, 0x86, 0x53, 0x8c, 0xbb, 0x70,
+	0x67, 0x8b, 0x69, 0xa7, 0xe9, 0x36, 0x1a, 0xfd, 0x46, 0x7c, 0x03, 0x50, 0xff, 0x92, 0x2c, 0x7f,
+	0xee, 0x9a, 0x52, 0x79, 0x66, 0x60, 0x44, 0x4e, 0xea, 0xb4, 0x5f, 0x56, 0x4d, 0xa9, 0xf0, 0x2d,
+	0x98, 0x2c, 0x72, 0xe5, 0x3d, 0x04, 0x46, 0x34, 0x9c, 0x3e, 0xf5, 0xf8, 0xa5, 0xc8, 0xd3, 0x76,
+	0x84, 0xaf, 0xc0, 0x52, 0x2c, 0x78, 0xa7, 0x3c, 0xab, 0xe5, 0x9e, 0xba, 0xf0, 0x07, 0xb8, 0xab,
+	0x3a, 0x13, 0x4c, 0x09, 0x71, 0x4a, 0xbf, 0x77, 0xa4, 0xf8, 0x9e, 0x37, 0xb8, 0xe0, 0x19, 0x97,
+	0xbc, 0xf7, 0x31, 0x58, 0x8b, 0xb6, 0xc2, 0x27, 0x70, 0xc4, 0x5e, 0x14, 0xa5, 0x58, 0x97, 0xe4,
+	0x0e, 0x70, 0x08, 0x8f, 0x35, 0x55, 0x59, 0x51, 0xe5, 0xae, 0x86, 0x36, 0x98, 0x4a, 0x96, 0x99,
+	0xab, 0x4f, 0xff, 0x68, 0x30, 0x4e, 0x4e, 0x76, 0x17, 0xd4, 0xec, 0x8b, 0x0d, 0xe1, 0x07, 0x80,
+	0xef, 0xc4, 0x09, 0xf1, 0x97, 0xc3, 0x7c, 0x86, 0x2f, 0xfa, 0x38, 0xf3, 0x99, 0x7f, 0x11, 0x2e,
+	0x21, 0x0e, 0x07, 0xf8, 0x09, 0x9c, 0x2e, 0x00, 0xfa, 0xfd, 0xf4, 0x3a, 0x95, 0x3f, 0xee, 0x67,
+	0xc7, 0x0b, 0x19, 0x60, 0x04, 0xd6, 0xe7, 0x2c, 0xfb, 0xff, 0xe3, 0x73, 0xec, 0xcd, 0x96, 0xb5,
+	0xd5, 0x5e, 0xd7, 0xc7, 0x7f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x88, 0x6b, 0x9e, 0x33, 0x97, 0x02,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -311,7 +403,9 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type PetstoreServiceClient interface {
-	GetPetByID(ctx context.Context, in *GetByIDRequest, opts ...grpc.CallOption) (*Pet, error)
+	GetPetByID(ctx context.Context, in *ID, opts ...grpc.CallOption) (*Pet, error)
+	UpdatePet(ctx context.Context, in *UpdatePetRequest, opts ...grpc.CallOption) (*Empty, error)
+	AddPet(ctx context.Context, in *Pet, opts ...grpc.CallOption) (*Pet, error)
 }
 
 type petstoreServiceClient struct {
@@ -322,7 +416,7 @@ func NewPetstoreServiceClient(cc *grpc.ClientConn) PetstoreServiceClient {
 	return &petstoreServiceClient{cc}
 }
 
-func (c *petstoreServiceClient) GetPetByID(ctx context.Context, in *GetByIDRequest, opts ...grpc.CallOption) (*Pet, error) {
+func (c *petstoreServiceClient) GetPetByID(ctx context.Context, in *ID, opts ...grpc.CallOption) (*Pet, error) {
 	out := new(Pet)
 	err := c.cc.Invoke(ctx, "/petstore.PetstoreService/GetPetByID", in, out, opts...)
 	if err != nil {
@@ -331,17 +425,43 @@ func (c *petstoreServiceClient) GetPetByID(ctx context.Context, in *GetByIDReque
 	return out, nil
 }
 
+func (c *petstoreServiceClient) UpdatePet(ctx context.Context, in *UpdatePetRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/petstore.PetstoreService/UpdatePet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *petstoreServiceClient) AddPet(ctx context.Context, in *Pet, opts ...grpc.CallOption) (*Pet, error) {
+	out := new(Pet)
+	err := c.cc.Invoke(ctx, "/petstore.PetstoreService/AddPet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PetstoreServiceServer is the server API for PetstoreService service.
 type PetstoreServiceServer interface {
-	GetPetByID(context.Context, *GetByIDRequest) (*Pet, error)
+	GetPetByID(context.Context, *ID) (*Pet, error)
+	UpdatePet(context.Context, *UpdatePetRequest) (*Empty, error)
+	AddPet(context.Context, *Pet) (*Pet, error)
 }
 
 // UnimplementedPetstoreServiceServer can be embedded to have forward compatible implementations.
 type UnimplementedPetstoreServiceServer struct {
 }
 
-func (*UnimplementedPetstoreServiceServer) GetPetByID(ctx context.Context, req *GetByIDRequest) (*Pet, error) {
+func (*UnimplementedPetstoreServiceServer) GetPetByID(ctx context.Context, req *ID) (*Pet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPetByID not implemented")
+}
+func (*UnimplementedPetstoreServiceServer) UpdatePet(ctx context.Context, req *UpdatePetRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePet not implemented")
+}
+func (*UnimplementedPetstoreServiceServer) AddPet(ctx context.Context, req *Pet) (*Pet, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddPet not implemented")
 }
 
 func RegisterPetstoreServiceServer(s *grpc.Server, srv PetstoreServiceServer) {
@@ -349,7 +469,7 @@ func RegisterPetstoreServiceServer(s *grpc.Server, srv PetstoreServiceServer) {
 }
 
 func _PetstoreService_GetPetByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetByIDRequest)
+	in := new(ID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -361,7 +481,43 @@ func _PetstoreService_GetPetByID_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/petstore.PetstoreService/GetPetByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PetstoreServiceServer).GetPetByID(ctx, req.(*GetByIDRequest))
+		return srv.(PetstoreServiceServer).GetPetByID(ctx, req.(*ID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PetstoreService_UpdatePet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PetstoreServiceServer).UpdatePet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/petstore.PetstoreService/UpdatePet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PetstoreServiceServer).UpdatePet(ctx, req.(*UpdatePetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PetstoreService_AddPet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Pet)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PetstoreServiceServer).AddPet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/petstore.PetstoreService/AddPet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PetstoreServiceServer).AddPet(ctx, req.(*Pet))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -373,6 +529,14 @@ var _PetstoreService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPetByID",
 			Handler:    _PetstoreService_GetPetByID_Handler,
+		},
+		{
+			MethodName: "UpdatePet",
+			Handler:    _PetstoreService_UpdatePet_Handler,
+		},
+		{
+			MethodName: "AddPet",
+			Handler:    _PetstoreService_AddPet_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

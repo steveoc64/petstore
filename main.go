@@ -4,6 +4,8 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/steveoc64/petstore/database"
+
 	"github.com/steveoc64/petstore/handler"
 
 	"github.com/sirupsen/logrus"
@@ -23,7 +25,7 @@ func main() {
 
 	// Setup logrus
 	log := logrus.New()
-	log.SetReportCaller(true)
+	log.SetFormatter(&logrus.JSONFormatter{})
 	log.Print("Starting Petstore")
 
 	// Get the runtime params from the ENV vars
@@ -40,6 +42,17 @@ func main() {
 	}
 	apiKey = os.Getenv("API_KEY")
 
-	petstore := handler.NewPetstoreServer(log, rpcPort, restPort, apiKey)
+	var db handler.Database
+	dbname := os.Getenv("DATABASE")
+	switch dbname {
+	case "MEMORY":
+		db = database.NewMemoryDB()
+	case "MYSQL":
+	default:
+		log.Errorf("Invalid DATABASE value %#v, using in-memory DB", dbname)
+		db = database.NewMemoryDB()
+	}
+
+	petstore := handler.NewPetstoreServer(log, db, rpcPort, restPort, apiKey)
 	petstore.Run()
 }

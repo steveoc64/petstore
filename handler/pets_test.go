@@ -22,7 +22,7 @@ func TestGetPetByID(t *testing.T) {
 	petServer := NewPetstoreServer(logrus.New(), testRpcPort, testRestPort, testAPIKey)
 
 	for i := range []int{1, 2, 3, 4, 5} {
-		v := int32(i)
+		v := int64(i)
 		pet, err := petServer.GetPetByID(context.TODO(), &pb.GetByIDRequest{
 			Id: v,
 		})

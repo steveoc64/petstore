@@ -5,3 +5,8 @@ http:
   rules:
     - selector: petstore.PetstoreService.GetPetByID
       get: /pet/{id}
+    - selector: petstore.PetstoreService.UpdatePet
+      post: /pet/{id}
+    - selector: petstore.PetstoreService.AddPet
+      post: /pet
+
