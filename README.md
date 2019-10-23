@@ -11,6 +11,21 @@
 - Include Docker build files / build docker container / test vs docker container
 - Show decisions / commit often
 
+
+## Definition of `endpoint` vs `resource`
+
+For the purpose of this exersize, I will be implementing the `/pet` endpoint as
+defined here https://petstore.swagger.io/#/pet
+
+There are 7 `resources` serviced by this endpoint.
+- Find Pet by ID
+- Update Pet - form data
+- Delete Pet
+- Upload an image for a pet
+- Add a pet
+- Update a Pet 
+- Find Pets by status
+
 ## Using the makefile
 
 There is a makefile provided to run development tasks easily.  It assumes that
@@ -25,6 +40,17 @@ you are running on a Unix-like system (Mac / Linux / BSD, etc)
 
 - `make generate` to re-generate protobuf glue code, should the protobufs change
 (requires the protobuf/grpc/grpc-gateway tools to be installed and configured)
+
+## Curl Scripts
+
+There are some utility curl scripts in the `./scripts` directory
+
+- `add_pet.sh` ID NAME CATEGORY_NAME << to add a new pet
+- `get_pet.sh` ID << to get a pet by ID
+- `update_pet.sh` ID NAME STATUS << to update a pet
+- `delete_pet.sh` API_KEY ID << to delete a pet.  The API_KEY must match the service's key. Default is ABC123
+
+
 
 ## Design Decisions - Architecture
 
@@ -141,3 +167,36 @@ than a linux box
 wherevere practical.
 - Errors. Either - return them, or log them and handle in line.  Dont do both.
 - Comments. Follow lint recommendations. Add a doc.go file to annotate `go doc` results.
+
+## Tech Debt / TODO
+
+Implementing this using gRPC/REST was pretty straight forward for the most part, but I did manage
+to paint myself into a corner with the error handling.
+
+The grpc-gateway has default fallbacks for managing errors (such as validation and parsing of input),
+which is nice and consistent and saves a lot of boilerplate code.
+
+However, the API spec does have requirements for error returns that grpc-gateway does not 
+exactly align with, so I have had to consider coming up with a way to control return values
+and HTTP status codes from within the handler, and have these applied by grpc-gateway.
+
+Have added a few extra lines of code in `handler/petstore.go` to implement a custom HTTPError 
+handler to enable this. Easy enough, but it does make the code more complicated.
+
+Using go1.13 error wrapping would be an ideal solution for passing more detailed errors through, although
+the grpc-gateway code does not support this yet. Nor could it without breaking compatibility for earlier
+versions of Go.
+
+Since complex error values are lost when passing through the gateway code, I have implemented a 
+convention where the handler can return an error value of the form :
+
+`NNN:Error String`
+
+If that pattern is detected, the custom error handler then treats the leading NNN as the status code to be used,
+and returns the rest as the error string. Its a valid assumption that all HTTP return codes are 3 digits.
+
+Im not 100% happy with that approach, but it works, is easy to reason about, and makes controlling error returns
+from the handlers very simple to code. Longer term, I would look at a better implementation of controlling errors
+perhaps. 
+
+
