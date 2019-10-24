@@ -3,6 +3,7 @@ module github.com/steveoc64/petstore
 go 1.13
 
 require (
+	github.com/fullstorydev/grpcurl v1.4.0 // indirect
 	github.com/golang/protobuf v1.3.2
 	github.com/grpc-ecosystem/grpc-gateway v1.11.3
 	github.com/jmoiron/sqlx v1.2.0

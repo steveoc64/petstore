@@ -73,7 +73,7 @@ func (s *PetstoreServer) DeletePet(ctx context.Context, req *pb.PetID) (*pb.Empt
 // FindPetsByStatus gets all the pets that match any of the passed in statuses
 func (s *PetstoreServer) FindPetsByStatus(ctx context.Context, req *pb.StatusReq) (*pb.Pets, error) {
 	s.log.WithField("statuses", strings.Join(req.Status, ",")).Info("FindPetsByStatus")
-	return &pb.Pets{}, nil
+	return s.db.FindPetsByStatus(ctx, req.Status)
 }
 
 // UpdatePet updates a pet from the input data

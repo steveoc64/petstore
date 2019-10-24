@@ -241,6 +241,27 @@ Im not 100% happy with that approach, but it works, is easy to reason about, and
 from the handlers very simple to code. Longer term, I would look at a better implementation of controlling errors
 perhaps. 
 
+## Known Bugs / Blockers
+
+- application/xml not implemented across the APIs.  Could do this in 1 place in the `grpc.go`, but need to investigate.
+- `PUT /pet` - I can trigger a 400 by sending invalid data (such as a string for the ID), but I cant trigger a 405 validation exception.
+- 
+
+`go lint` reports on the test code:
+
+```
+golint ./...
+handler/pets_test.go:146:31: should not use basic type string as key in context.WithValue
+handler/pets_test.go:153:31: should not use basic type string as key in context.WithValue
+handler/pets_test.go:159:31: should not use basic type string as key in context.WithValue
+```
+
+Which I can get around easily by creating a non-basic string type, set it to `api_key` and then 
+pass this through. Doing this cleans up the linter output, but then causes the `apiKeyMatcher` 
+to break, since its assuming the input is a string.
+
+
+
 ## Notes on out of scope possibilities with more code generation
 
 For the purpose of this exersize, I will avoid the use of any additional code generation tools

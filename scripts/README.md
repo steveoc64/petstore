@@ -3,6 +3,7 @@
 A collection of curl scripts to hit the petstore from the command line.
 
 - add_pet.sh ID
+- add_pet_rpc.sh ID ... get the pet using direct RPC call
 - delete_pet.sh
 - get_pet.sh
 - update_pet_form.sh

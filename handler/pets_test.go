@@ -134,6 +134,7 @@ func TestDeletePet(t *testing.T) {
 	ctx := context.Background()
 
 	expectedErr := errors.New("400:Invalid API_KEY Supplied")
+	contextApiKey := "api_key"
 
 	// No api_key with valid pet == fail
 	_, err := petServer.DeletePet(ctx, &pb.PetID{PetId: 1})
@@ -142,20 +143,20 @@ func TestDeletePet(t *testing.T) {
 	}
 
 	// Invalid api_key with valid pet == fail
-	_, err = petServer.DeletePet(context.WithValue(ctx, "api_key", "ABCxxx"), &pb.PetID{PetId: 1})
+	_, err = petServer.DeletePet(context.WithValue(ctx, contextApiKey, "ABCxxx"), &pb.PetID{PetId: 1})
 	if err.Error() != expectedErr.Error() {
 		t.Errorf("Delete pet with invalid key gets %#v, expecting %#v", err.Error(), expectedErr.Error())
 	}
 
 	// valid api_key with invalid pet == fail
 	expectedErr = errors.New("404:Pet not found 100")
-	_, err = petServer.DeletePet(context.WithValue(ctx, "api_key", testAPIKey), &pb.PetID{PetId: 100})
+	_, err = petServer.DeletePet(context.WithValue(ctx, contextApiKey, testAPIKey), &pb.PetID{PetId: 100})
 	if err.Error() != expectedErr.Error() {
 		t.Errorf("Delete pet with valid key and invalid petID gets %#v, expecting %#v", err.Error(), expectedErr.Error())
 	}
 
 	// valid api key with valid pet == pass
-	_, err = petServer.DeletePet(context.WithValue(ctx, "api_key", testAPIKey), &pb.PetID{PetId: 1})
+	_, err = petServer.DeletePet(context.WithValue(ctx, contextApiKey, testAPIKey), &pb.PetID{PetId: 1})
 	if err != nil {
 		t.Errorf("Delete pet with valid key and valid petID gets error %#v, expecting nil", err.Error())
 	}

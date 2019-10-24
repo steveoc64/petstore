@@ -12,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 
+	"google.golang.org/grpc/reflection"
+
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	pb "github.com/steveoc64/petstore/proto"
 	"google.golang.org/grpc"
@@ -29,6 +31,7 @@ func (s *PetstoreServer) grpcRun() {
 	}
 	grpcServer := grpc.NewServer()
 	pb.RegisterPetstoreServiceServer(grpcServer, s)
+	reflection.Register(grpcServer)
 
 	s.log.WithField("endpoint", endpoint).Println("Serving gRPC")
 
