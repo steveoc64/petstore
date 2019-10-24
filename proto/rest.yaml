@@ -3,11 +3,8 @@ config_version: 3
 
 http:
   rules:
-    - selector: petstore.PetstoreService.FindPetsByStatus
-      get: /pets/findByStatus
     - selector: petstore.PetstoreService.GetPetByID
       get: /pet/{pet_id}
-      value_type: int64
     - selector: petstore.PetstoreService.UpdatePetWithForm
       post: /pet/{pet_id}
       body: "*"
@@ -22,5 +19,7 @@ http:
     - selector: petstore.PetstoreService.UpdatePet
       put: /pet
       body: "*"
+    - selector: petstore.PetstoreService.FindPetsByStatus
+      get: /pet/findByStatus
 
 

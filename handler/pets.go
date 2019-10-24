@@ -46,9 +46,14 @@ func (s *PetstoreServer) AddPet(ctx context.Context, req *pb.Pet) (*pb.Pet, erro
 		"id":   req.Id,
 		"name": req.Name,
 	}).Info("AddPet")
-
-	pet := req
-	err := s.db.AddPet(ctx, pet)
+	// Validation - the pet must have a name, and must have at least 1 photo URL
+	if req.Name == "" {
+		return nil, fmt.Errorf("405:Pet Name Required")
+	}
+	if len(req.PhotoUrls) == 0 {
+		return nil, fmt.Errorf("405:Pet must have at least 1 photo")
+	}
+	err := s.db.AddPet(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -79,6 +84,13 @@ func (s *PetstoreServer) FindPetsByStatus(ctx context.Context, req *pb.StatusReq
 // UpdatePet updates a pet from the input data
 func (s *PetstoreServer) UpdatePet(ctx context.Context, req *pb.Pet) (*pb.Pet, error) {
 	s.log.WithField("id", req.Id).Info("UpdatePet")
+	// Validation - the pet must have a name, and must have at least 1 photo URL
+	if req.Name == "" {
+		return nil, fmt.Errorf("405:Pet Name Required")
+	}
+	if len(req.PhotoUrls) == 0 {
+		return nil, fmt.Errorf("405:Pet must have at least 1 photo")
+	}
 	// In the SwaggerAPI example, if you enter a pet with ID 0, then it
 	// creates a new pet and returns 200.  We will do the same here
 	if req.Id == 0 {

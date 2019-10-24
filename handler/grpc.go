@@ -49,7 +49,12 @@ func (s *PetstoreServer) rpcProxy() error {
 
 	// The UpdatePet resource uses both form-encoded data and POST, so need some custom
 	// code here to handle that
-	mux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(apiKeyMatcher))
+	mux := runtime.NewServeMux(
+		runtime.WithIncomingHeaderMatcher(apiKeyMatcher),
+		// this gets around that nasty bit about having 2 patterns that
+		// match on the GET pet/{PetID} and GET pet/fetchByStatus
+		runtime.WithLastMatchWins(),
+	)
 	runtime.SetHTTPBodyMarshaler(mux)
 
 	// handle incoming form data - rewrite it as JSON for grpc handling

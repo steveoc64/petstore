@@ -23,9 +23,17 @@ func TestPetstoreHTTP(t *testing.T) {
 
 	t.Log("Call the HTTP/REST endpoint after 200ms break")
 	time.Sleep(time.Millisecond * 200)
-
+	client := &http.Client{}
 	for _, i := range []int{1, 2, 3, 4, 5} {
-		resp, err := http.Get(fmt.Sprintf("http://localhost:%d/pet/%d", testRestPort, i))
+		url := fmt.Sprintf("http://localhost:%d/pet/%d", testRestPort, i)
+		req, err := http.NewRequest("GET", url, nil)
+
+		if err != nil {
+			t.Error("Error creating request", url, err.Error())
+		}
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		resp, err := client.Do(req)
+		//resp, err := http.Get(fmt.Sprintf("http://localhost:%d/pet/%d", testRestPort, i))
 		if err != nil {
 			t.Errorf("TestPetstoreListen unexpected Error calling GET %v", err.Error())
 			return
