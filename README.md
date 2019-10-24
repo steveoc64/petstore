@@ -51,6 +51,13 @@ There are some utility curl scripts in the `./scripts` directory
 - `delete_pet.sh` API_KEY ID << to delete a pet.  The API_KEY must match the service's key. Default is ABC123
 - `find_by_status.sh` STATUS << to lookup pets by status code.
 
+Note that the above functions are already covered by unit tests in the go code, 
+but these scripts add some (possibly handy) command line options too.
+
+eg:
+
+`get_pet.sh NNN | jq`  to quickly see the contents of a pet in the DB
+
 ## Design Decisions - Architecture
 
 The swagger specification defines a number of REST endpoints that need to be delivered,
