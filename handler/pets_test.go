@@ -311,5 +311,8 @@ func TestUpdatePet(t *testing.T) {
 }
 
 func TestUploadFile(t *testing.T) {
+	// TODO - add an upload test
+
+	// there is currently a curl script to test this
 
 }
