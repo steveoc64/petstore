@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"google.golang.org/grpc/metadata"
+
 	"github.com/sirupsen/logrus"
 
 	pb "github.com/steveoc64/petstore/proto"
@@ -28,7 +30,7 @@ func (s *PetstoreServer) GetPetByID(ctx context.Context, req *pb.PetID) (*pb.Pet
 	return pet, nil
 }
 
-// UpdatePet updates the name and status of a Pet
+// UpdatePetWithForm updates the name and status of a Pet using form encoded data, converted to protobuf
 func (s *PetstoreServer) UpdatePetWithForm(ctx context.Context, req *pb.UpdatePetWithFormReq) (*pb.Empty, error) {
 	s.log.WithFields(logrus.Fields{
 		"id":     req.PetId,
@@ -36,7 +38,7 @@ func (s *PetstoreServer) UpdatePetWithForm(ctx context.Context, req *pb.UpdatePe
 		"status": req.Status,
 	}).Info("UpdatePet")
 
-	err := s.db.UpdatePet(ctx, req.PetId, req.Name, req.Status)
+	err := s.db.UpdatePetWithForm(ctx, req.PetId, req.Name, req.Status)
 	return &pb.Empty{}, err
 }
 
@@ -64,8 +66,21 @@ func (s *PetstoreServer) AddPet(ctx context.Context, req *pb.Pet) (*pb.Pet, erro
 
 // DeletePet removes a pet. Check the req header for the API_KEY value
 func (s *PetstoreServer) DeletePet(ctx context.Context, req *pb.DeletePetReq) (*pb.Empty, error) {
-	s.log.WithField("id", req.PetId).Info("DeletePet")
-	return &pb.Empty{}, nil
+	// get the passed in APIKey and validate first
+	var apiKey string
+	if headers, ok := metadata.FromIncomingContext(ctx); ok {
+		apiKeys := headers["api_key"]
+		if len(apiKeys) < 1 || apiKeys[0] != s.apiKey {
+			return nil, fmt.Errorf("400:Invalid API_KEY Supplied")
+		}
+		apiKey = apiKeys[0]
+	}
+	s.log.WithFields(logrus.Fields{
+		"id":      req.PetId,
+		"api_key": apiKey,
+	}).Info("DeletePet")
+	err := s.db.DeletePet(ctx, req.PetId)
+	return &pb.Empty{}, err
 }
 
 // FindPetsByStatus gets all the pets that match any of the passed in statuses
@@ -75,13 +90,31 @@ func (s *PetstoreServer) FindPetsByStatus(ctx context.Context, req *pb.StatusReq
 }
 
 // UpdatePet updates a pet from the input data
-func (s *PetstoreServer) UpdatePet(ctx context.Context, req *pb.Pet) (*pb.Empty, error) {
+func (s *PetstoreServer) UpdatePet(ctx context.Context, req *pb.Pet) (*pb.Pet, error) {
 	s.log.WithField("id", req.PetId).Info("UpdatePet")
-	return &pb.Empty{}, nil
+	err := s.db.UpdatePet(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	// In the swaggerAPI example, calling this REST endpoint returns the updated pet details
+	// we do the same here
+	return s.db.GetPetByID(ctx, req.PetId)
 }
 
 // UploadFile uploads a photo against a pet
-func (s *PetstoreServer) UploadFile(ctx context.Context, req *pb.UploadFileReq) (*pb.Empty, error) {
+func (s *PetstoreServer) UploadFile(ctx context.Context, req *pb.UploadFileReq) (*pb.ApiResponse, error) {
 	s.log.WithField("id", req.PetId).Info("UploadFile")
-	return &pb.Empty{}, nil
+	err := s.db.UploadFile(ctx, req.PetId, req.File)
+	if err != nil {
+		return &pb.ApiResponse{
+			Code:    1,
+			Type:    "error",
+			Message: fmt.Sprintf("upload error %s", err.Error()),
+		}, err
+	}
+	return &pb.ApiResponse{
+		Code:    11,
+		Type:    "type 11",
+		Message: "api success response of type 11",
+	}, nil
 }

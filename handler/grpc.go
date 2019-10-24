@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	pb "github.com/steveoc64/petstore/proto"
@@ -46,13 +47,13 @@ func (s *PetstoreServer) rpcProxy() error {
 
 	// The UpdatePet resource uses both form-encoded data and POST, so need some custom
 	// code here to handle that
-	mux := runtime.NewServeMux()
+	mux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(apiKeyMatcher))
 	runtime.SetHTTPBodyMarshaler(mux)
 
+	// handle incoming form data - rewrite it as JSON for grpc handling
 	formWrapper := func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if strings.ToLower(strings.Split(r.Header.Get("Content-Type"), ";")[0]) == "application/x-www-form-urlencoded" {
-				log.Println("Rewriting form data as JSON")
 				if err := r.ParseForm(); err != nil {
 					http.Error(w, err.Error(), http.StatusMethodNotAllowed) // strange value, but thats whats in the swagger spec
 					log.Println("Invalid Input", err.Error())
@@ -77,6 +78,16 @@ func (s *PetstoreServer) rpcProxy() error {
 		})
 	}
 
+	timingWrapper := func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// TODO - these elapsed timing metrics should be sent to a metrics
+			// service here ... logging them to the logger for now
+			t1 := time.Now()
+			mux.ServeHTTP(w, r)
+			s.log.WithField("elapsed", time.Since(t1).String()).Info("Call Duration")
+		})
+	}
+
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	rpcendpoint := fmt.Sprintf(":%d", s.rpcPort)
 	webendpoint := fmt.Sprintf(":%d", s.restPort)
@@ -86,7 +97,17 @@ func (s *PetstoreServer) rpcProxy() error {
 	}
 
 	s.log.WithField("endpoint", webendpoint).Println("Serving REST Proxy")
-	return http.ListenAndServe(webendpoint, formWrapper(mux))
+	return http.ListenAndServe(webendpoint, timingWrapper(formWrapper(mux)))
+}
+
+// apiKeyMatcher looks for the API_KEY in the header, and includes it in the grpc data
+func apiKeyMatcher(key string) (string, bool) {
+	switch key {
+	case "Api_key", "api_key":
+		return key, true
+	default:
+		return key, false
+	}
 }
 
 type errorBody struct {

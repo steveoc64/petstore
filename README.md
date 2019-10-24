@@ -149,6 +149,17 @@ eg - run the program with
 
 `DATABASE=TESTDB ./petstore`  runs up the service, using an in-memory DB with half a dozen pets seeded
 
+Looking at the data model, I would suggest that SQL is overkill for this microservice - 
+it lends itself better to a simple KeyValue store (Bolt, Redis, or NoSQL, etc). Really 
+depends on what the requirements might be to share this data with external microservices.
+
+Also depends on how dynamic the tags / categories values are.  Do they need to be maintained
+as a separate data set, or are they relatively static ?  There are no API endpoints defined 
+for adjusting the values, so Im assuming static for now.
+
+If going for a simple KeyValue store with static Categories and Tags, the existing `memory` database driver
+provides that model. It could easily be mapped to Redis / Bolt / Mongo without much additional code.
+
 ## Design Decisions - Docker
 
 There are a LOT of different options when building a docker container, from including a full OS

@@ -16,7 +16,7 @@ import (
 // across HTTP.  Provides test coverage for the full round trip, does not needed to be
 // extended if the API changes
 func TestPetstoreHTTP(t *testing.T) {
-	petServer := NewPetstoreServer(logrus.New(), testdb.NewTestDB(), testRpcPort, testRestPort, testAPIKey)
+	petServer := NewPetstoreServer(logrus.New(), testdb.New(), testRPCPort, testRestPort, testAPIKey)
 
 	t.Log("Testing Running the RPC/REST Listener - mini integration test")
 	go petServer.Run()
@@ -24,7 +24,7 @@ func TestPetstoreHTTP(t *testing.T) {
 	t.Log("Call the HTTP/REST endpoint after 200ms break")
 	time.Sleep(time.Millisecond * 200)
 
-	for i := range []int{1, 2, 3, 4, 5} {
+	for _, i := range []int{1, 2, 3, 4, 5} {
 		resp, err := http.Get(fmt.Sprintf("http://localhost:%d/pet/%d", testRestPort, i))
 		if err != nil {
 			t.Errorf("TestPetstoreListen unexpected Error calling GET %v", err.Error())

@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	defaultRpcPort  = 8081
+	defaultRPCPort  = 8081
 	defaultRestPort = 8080
 )
 
@@ -31,7 +31,7 @@ func main() {
 	// Get the runtime params from the ENV vars
 	rpcPort, err = strconv.Atoi(os.Getenv("RPC_PORT"))
 	if err != nil {
-		rpcPort = defaultRpcPort
+		rpcPort = defaultRPCPort
 		log.Error("Missing RPC_PORT")
 	}
 
@@ -46,14 +46,19 @@ func main() {
 	dbname := os.Getenv("DATABASE")
 	switch dbname {
 	case "MEMORY":
-		db = memory.NewMemoryDB()
+		db = memory.New()
 	case "TESTDB":
-		db = testdb.NewTestDB()
+		db = testdb.New()
+		log.Info("Created TESTDB with pets [1..5]")
 	case "MYSQL":
-		db, err = mysql.NewMysqlDB(log, os.Getenv("DSN"))
+		dsn := os.Getenv("DSN")
+		db, err = mysql.New(log, dsn)
+		if err != nil {
+			log.WithError(err).WithField("dsn", dsn).Fatal("Error opening mysql connection")
+		}
 	default:
 		log.Errorf("Invalid DATABASE value %#v", dbname)
-		db = memory.NewMemoryDB()
+		db = memory.New()
 	}
 	log.WithField("database", dbname).Info("Connected to DB")
 

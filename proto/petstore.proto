@@ -1,17 +1,14 @@
 syntax = "proto3";
 package petstore;
 import "google/api/annotations.proto";
-import "google/api/httpbody.proto";
-
-option go_package = "google.golang.org/genproto/googleapis/api/httpbody;httpbody";
 
 service PetstoreService {
     rpc GetPetByID(PetID) returns (Pet) {};
     rpc UpdatePetWithForm(UpdatePetWithFormReq) returns (Empty) {};
     rpc DeletePet(DeletePetReq) returns (Empty) {};
-    rpc UploadFile(UploadFileReq) returns (Empty) {};
+    rpc UploadFile(UploadFileReq) returns (ApiResponse) {};
     rpc AddPet(Pet) returns (Pet) {};
-    rpc UpdatePet(Pet) returns (Empty) {};
+    rpc UpdatePet(Pet) returns (Pet) {};
     rpc FindPetsByStatus(StatusReq) returns (Pets) {};
 }
 
@@ -48,13 +45,12 @@ message Pet {
 
 message UpdatePetWithFormReq {
     int64 pet_id = 1;
-    google.api.HttpBody http_body = 2;
-    string name = 3;
-    string status = 4;
+    string name = 2;
+    string status = 3;
 }
 
 message DeletePetReq {
-    // Note - api_key is passed in via a header, not a param
+    // Note - api_key is passed in via a header, you will find it in the ctx metadata
     int64 pet_id = 1;
 }
 
@@ -75,5 +71,11 @@ message StatusReq {
 
 message Pets {
     repeated Pet pets = 1;
+}
+
+message ApiResponse {
+    int32 code = 1;
+    string type = 2;
+    string message = 3;
 }
 
