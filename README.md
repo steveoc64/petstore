@@ -104,8 +104,8 @@ if the API changes are as follows :
 - `proto/petstore.proto` Formal definitions of the models and parameters, defined in 1 place. The following `proto/petstore.pb.*` 
 are generated code that need to be re-generated each time the protobuf file is altered. (see `make generate`)
 - `proto/rest.yaml` This file defines the connection between the REST endpoints and the Go objects
-- `handler/pets.go` The code for each of the endpoints in the "pets" range. 1 endpoint = 1 function
-- `handler/pets_test.go` The test code for each of the endpoints in the "pets" range. 1 endpoint = 1 test
+- `handler/pets.go` The code for each of the resources in the "pets" endpoint. 1 resource = 1 function
+- `handler/pets_test.go` The test code for each of the resources in the "pets" endpoint. 1 resource = 1 test
 
 Other files such as `main.go`, `handler/petstore.go` defines the handler, sets the storage interface, and sets 
 up all the network listeners.  This is common / boilerplate code, and need not be changed as the API
