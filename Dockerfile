@@ -4,6 +4,7 @@ MAINTAINER steveoc64@gmail.com
 
 # Statically linked Go code - just need the 1 executable and thats all
 COPY ./entrypoint ./entrypoint
+RUN mkdir -p /photos
 ENTRYPOINT ["/entrypoint"]
 
 # Set the port to expose the service on
