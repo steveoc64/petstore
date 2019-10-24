@@ -105,32 +105,7 @@ changes.
 Likewise, the full end-to-end test case in `handler/petstore_test.go` provides test coverage for actually
 spinning up the RPC and REST handlers, so does not need attention if the API expands.
 
-## Notes on out of scope possibilities with more code generation
 
-For the purpose of this exersize, I will avoid the use of any additional code generation tools
-and write the implementations manually. I think that is the best way to get a result
-out in the given timeframe, and demonstrate a good understanding of the basic principles
-at the same time.
-
-There is the possibility of further automating this workflow using off the shelf tools.
-
-Using gRPC + protobuf, we can setup a toolchain that enables changes to the Swagger API 
-spec to apply some automation to both the protobuf definitions and the Go code.
-
-It is also possible to go the other way, so use protobufs and rpc definitions to 
-describe the project, and then generate swagger / OpenAPI from that. 
-
-There are existing tools such as gnostic https://github.com/googleapis/gnostic
-
-.. which if configured correctly could enable generation of the both the protobuf
-definitions, as well as scaffold out the API Go code for both client and server
-sides of the service directly from the swagger files.
-
-There is also the https://github.com/nytimes/openapi2proto project, which uses as 
-more direct approach with its own custom parsers.  Looks promising to use, or possibly
-as a base to build some custom code generation tooling from.
-
-Sounds like fun, but is out of scope for this project.
 
 ## Design Decisions - Data Storage
 
@@ -263,4 +238,29 @@ Im not 100% happy with that approach, but it works, is easy to reason about, and
 from the handlers very simple to code. Longer term, I would look at a better implementation of controlling errors
 perhaps. 
 
+## Notes on out of scope possibilities with more code generation
 
+For the purpose of this exersize, I will avoid the use of any additional code generation tools
+and write the implementations manually. I think that is the best way to get a result
+out in the given timeframe, and demonstrate a good understanding of the basic principles
+at the same time.
+
+There is the possibility of further automating this workflow using off the shelf tools.
+
+Using gRPC + protobuf, we can setup a toolchain that enables changes to the Swagger API 
+spec to apply some automation to both the protobuf definitions and the Go code.
+
+It is also possible to go the other way, so use protobufs and rpc definitions to 
+describe the project, and then generate swagger / OpenAPI from that. 
+
+There are existing tools such as gnostic https://github.com/googleapis/gnostic
+
+.. which if configured correctly could enable generation of the both the protobuf
+definitions, as well as scaffold out the API Go code for both client and server
+sides of the service directly from the swagger files.
+
+There is also the https://github.com/nytimes/openapi2proto project, which uses as 
+more direct approach with its own custom parsers.  Looks promising to use, or possibly
+as a base to build some custom code generation tooling from.
+
+Sounds like fun, but is out of scope for this project.
