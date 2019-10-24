@@ -174,6 +174,17 @@ I have added a form encoding wrapper to the HTTP mux to rewrite form encoded dat
 Likewise, the `api_key` header value is not passed through into the metadata by default, so I have
 added a simple function to `grpc.go` to pass through this custom header value.
 
+
+Also, I did get stuck for a while on the pair of requests that share a URL pattern, ie:
+
+- `GET /pet/{PetID}`
+- `GET /pet/findByStatus`
+
+Nothing I tried would work here.  After digging through the grpc gateway code, found that there is a simple
+flag you can set (`lastMatchWins = true`) by adding `runtime.WithLastMatchWins()` to the `NewServeMux()` call
+to control which of the matched patterns gets selected.  This is specific to grpc. Didnt know that.
+
+
 ## Tech Debt - XML Output
 
 The current code base outputs JSON encoding only, I have not implemented XML output yet.  The Swagger API
