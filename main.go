@@ -23,6 +23,9 @@ func main() {
 		err               error
 	)
 
+	// create the photos directory if it doesnt already exist
+	os.Mkdir("photos", 0777)
+
 	// Setup logrus
 	log := logrus.New()
 	log.SetFormatter(&logrus.JSONFormatter{})

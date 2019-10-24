@@ -163,6 +163,9 @@ I have chosen the minimalist approach with this project:
 - Set GOOS and GOARCH when building the entrypoint
 - All runtime parameters are to be passed through using ENV vars in the docker container
 
+If you want to be able to connect to a shell in the container and watch what it is doing, you
+can easily rebase this off Alpine, or more.
+
 ## Misc Code Style Notes
 
 - Interfaces.  Defined at the consumer end, and used as input params. Avoid writing code that returns an interface
