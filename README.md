@@ -49,6 +49,7 @@ There are some utility curl scripts in the `./scripts` directory
 - `get_pet.sh` ID << to get a pet by ID
 - `update_pet.sh` ID NAME STATUS << to update a pet
 - `delete_pet.sh` API_KEY ID << to delete a pet.  The API_KEY must match the service's key. Default is ABC123
+- `find_by_status.sh` STATUS << to lookup pets by status code.
 
 ## Design Decisions - Architecture
 
