@@ -163,6 +163,10 @@ func (s *PetstoreServer) rpcProxy(log *logrus.Logger) error {
 	return http.ListenAndServe(webendpoint, formWrapper(mux))
 }
 
+type contextKey string
+
+var contextAPIKey = contextKey("api_key")
+
 // apiKeyMatcher looks for the API_KEY in the header, and includes it in the grpc data
 func apiKeyMatcher(key string) (string, bool) {
 	switch key {

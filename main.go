@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"github.com/steveoc64/petstore/database/memory"
@@ -46,7 +47,7 @@ func main() {
 	apiKey = os.Getenv("API_KEY")
 
 	var db handler.Database
-	dbname := os.Getenv("DATABASE")
+	dbname := strings.ToUpper(os.Getenv("DATABASE"))
 	switch dbname {
 	case "MEMORY":
 		db = memory.New()

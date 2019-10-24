@@ -63,7 +63,7 @@ func (s *PetstoreServer) AddPet(ctx context.Context, req *pb.Pet) (*pb.Pet, erro
 // DeletePet removes a pet. Check the req header for the API_KEY value
 func (s *PetstoreServer) DeletePet(ctx context.Context, req *pb.PetID) (*pb.Empty, error) {
 	// get the passed in APIKey and validate first
-	apiKey := ctx.Value("api_key")
+	apiKey := ctx.Value(contextAPIKey)
 	if apiKey != s.apiKey {
 		return nil, fmt.Errorf("400:Invalid API_KEY Supplied")
 	}

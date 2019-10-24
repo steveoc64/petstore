@@ -268,20 +268,6 @@ perhaps.
 - `PUT /pet` - I can trigger a 400 by sending invalid data (such as a string for the ID), but I cant trigger a 405 validation exception.
 - 
 
-`go lint` reports on the test code:
-
-```
-golint ./...
-handler/pets_test.go:146:31: should not use basic type string as key in context.WithValue
-handler/pets_test.go:153:31: should not use basic type string as key in context.WithValue
-handler/pets_test.go:159:31: should not use basic type string as key in context.WithValue
-```
-
-Which I can get around easily by creating a non-basic string type, set it to `api_key` and then 
-pass this through. Doing this cleans up the linter output, but then causes the `apiKeyMatcher` 
-to break, since its assuming the input is a string. Would need more time to clean this up if
-its deemed important.
-
 ## Notes on out of scope possibilities with more code generation
 
 For the purpose of this exersize, I will avoid the use of any additional code generation tools

@@ -134,7 +134,6 @@ func TestDeletePet(t *testing.T) {
 	ctx := context.Background()
 
 	expectedErr := errors.New("400:Invalid API_KEY Supplied")
-	contextAPIKey := "api_key"
 
 	// No api_key with valid pet == fail
 	_, err := petServer.DeletePet(ctx, &pb.PetID{PetId: 1})
