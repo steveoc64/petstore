@@ -171,7 +171,6 @@ var contextAPIKey = contextKey("api_key")
 func apiKeyMatcher(key string) (string, bool) {
 	switch key {
 	case "Api_key", "api_key":
-		println("matched", key)
 		return key, true
 	default:
 		return key, false

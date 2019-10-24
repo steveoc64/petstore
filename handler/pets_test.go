@@ -166,7 +166,7 @@ func TestDeletePet(t *testing.T) {
 		t.Errorf("Pet 1 still exists after being deleted %#v", pet)
 	}
 	expectedErr = errors.New("404:Pet 1 not found")
-	if err.Error() != expectedErr.Error() {
+	if err != nil && err.Error() != expectedErr.Error() {
 		t.Errorf("Deleting pet from DB gets unexpected error %#v, expecting %#v", err.Error(), expectedErr.Error())
 	}
 }
