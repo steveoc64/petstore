@@ -43,7 +43,8 @@ you are running on a Unix-like system (Mac / Linux / BSD, etc)
 
 ## Curl Scripts
 
-There are some utility curl scripts in the `./scripts` directory
+There are some utility curl scripts in the `./scripts` directory that can be used
+to probe the running system from the command line.
 
 - `add_pet.sh` ID NAME CATEGORY_NAME << to add a new pet
 - `get_pet.sh` ID << to get a pet by ID

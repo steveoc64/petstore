@@ -14,13 +14,13 @@ ENV RPC_PORT 8081
 EXPOSE 8081/tcp
 
 # Some endpoints (like delete pet) need an API_KEY value - define it here
-ENV API_KEY "ABC123"
+ENV API_KEY ABC123
 
 # Which storage mechanism to use ?
 # Use "memory" for in-memory storage
 # or set an appropriate MySQL / pgSQL / etc
-ENV DATABASE "memory"
-ENV DSN ""
+ENV DATABASE memory
+ENV DSN none
 
-#ENV DATABASE "mysql"
-#ENV DSN "user:password@/dbname"
+#ENV DATABASE mysql
+#ENV DSN user:password@/dbname
