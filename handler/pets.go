@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"google.golang.org/grpc/metadata"
+
 	"github.com/sirupsen/logrus"
 
 	pb "github.com/steveoc64/petstore/proto"
@@ -63,7 +65,13 @@ func (s *PetstoreServer) AddPet(ctx context.Context, req *pb.Pet) (*pb.Pet, erro
 // DeletePet removes a pet. Check the req header for the API_KEY value
 func (s *PetstoreServer) DeletePet(ctx context.Context, req *pb.PetID) (*pb.Empty, error) {
 	// get the passed in APIKey and validate first
-	apiKey := ctx.Value(contextAPIKey)
+	var apiKey string
+	if headers, ok := metadata.FromIncomingContext(ctx); ok {
+		apiKeys := headers.Get("api_key")
+		if len(apiKeys) > 0 {
+			apiKey = apiKeys[0]
+		}
+	}
 	if apiKey != s.apiKey {
 		return nil, fmt.Errorf("400:Invalid API_KEY Supplied")
 	}
