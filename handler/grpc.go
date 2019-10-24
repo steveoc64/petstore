@@ -6,11 +6,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 
 	"google.golang.org/grpc/reflection"
 
@@ -40,7 +41,7 @@ func (s *PetstoreServer) grpcRun() {
 
 // rpcProxy hooks up the REST endpoints.
 // Looks ugly, but its just common boilerplate that would normally be in a lib
-func (s *PetstoreServer) rpcProxy() error {
+func (s *PetstoreServer) rpcProxy(log *logrus.Logger) error {
 	// Use our custom error handler
 	runtime.HTTPError = CustomHTTPError
 	ctx := context.Background()
@@ -57,13 +58,20 @@ func (s *PetstoreServer) rpcProxy() error {
 	)
 	runtime.SetHTTPBodyMarshaler(mux)
 
-	// handle incoming form data - rewrite it as JSON for grpc handling
 	formWrapper := func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if strings.ToLower(strings.Split(r.Header.Get("Content-Type"), ";")[0]) == "application/x-www-form-urlencoded" {
+			// handle incoming form data - rewrite it as JSON for grpc handling
+			contentType := strings.ToLower(strings.Split(r.Header.Get("Content-Type"), ";")[0])
+			switch contentType {
+			case "application/x-www-form-urlencoded":
 				if err := r.ParseForm(); err != nil {
+					log.WithFields(logrus.Fields{
+						"method":  r.Method,
+						"url":     r.URL,
+						"browser": r.UserAgent(),
+						"ip":      r.RemoteAddr,
+					}).WithError(err).Error("Failed to parse form")
 					http.Error(w, err.Error(), http.StatusMethodNotAllowed) // strange value, but thats whats in the swagger spec
-					log.Println("Invalid Input", err.Error())
 					return
 				}
 				jsonMap := make(map[string]interface{}, len(r.Form))
@@ -76,11 +84,55 @@ func (s *PetstoreServer) rpcProxy() error {
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 				}
-				fmt.Printf("JSON = %#v", string(jsonBody))
 
 				r.Body = ioutil.NopCloser(bytes.NewReader(jsonBody))
 				r.ContentLength = int64(len(jsonBody))
 				r.Header.Set("Content-Type", "application/json")
+			case "multipart/form-data":
+				// 4 MB image limit should do for now
+				if err := r.ParseMultipartForm(4 << 20); err != nil {
+					log.WithFields(logrus.Fields{
+						"method":  r.Method,
+						"url":     r.URL,
+						"browser": r.UserAgent(),
+						"ip":      r.RemoteAddr,
+					}).WithError(err).Error("Failed to parse multipart form")
+					http.Error(w, err.Error(), http.StatusBadRequest)
+					return
+				}
+				file, handler, err := r.FormFile("file")
+				if err != nil {
+					log.WithFields(logrus.Fields{
+						"method":  r.Method,
+						"url":     r.URL,
+						"browser": r.UserAgent(),
+						"ip":      r.RemoteAddr,
+					}).WithError(err).Error("Failed to get file data")
+					return
+				}
+				defer file.Close()
+				//fmt.Printf("Uploaded File: %+v\n", handler.Filename)
+				//fmt.Printf("File Size: %+v\n", handler.Size)
+				//fmt.Printf("MIME Header: %+v\n", handler.Header)
+
+				tempFile, err := ioutil.TempFile("temp-images", "upload-*.png")
+				if err != nil {
+					fmt.Println(err)
+				}
+				defer tempFile.Close()
+
+				// read all of the contents of our uploaded file into a
+				// byte array
+				fileBytes, err := ioutil.ReadAll(file)
+				if err != nil {
+					fmt.Println(err)
+				}
+				// write this byte array to our temporary file
+				tempFile.Write(fileBytes)
+				// return that we have successfully uploaded our file!
+				fmt.Fprintf(w, "Successfully Uploaded File\n")
+			default:
+				println("content type", contentType)
 			}
 			mux.ServeHTTP(w, r)
 		})

@@ -21,5 +21,8 @@ http:
       body: "*"
     - selector: petstore.PetstoreService.FindPetsByStatus
       get: /pet/findByStatus
+    - selector: petstore.PetstoreService.UploadFile
+      post: /pet/{pet_id}/uploadImage
+
 
 
