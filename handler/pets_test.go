@@ -252,7 +252,7 @@ func TestFindPetsByStatus(t *testing.T) {
 }
 
 func TestUpdatePet(t *testing.T) {
-	t.Log(("Testing DeletePet"))
+	t.Log(("Testing UpdatePet"))
 
 	db := testdb.New()
 	petServer := NewPetstoreServer(logrus.New(), db, testRPCPort, testRestPort, testAPIKey)
