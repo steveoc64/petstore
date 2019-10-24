@@ -181,13 +181,15 @@ wherever practical.
 - Errors. Either - return them, or log them and handle in line.  Dont do both.
 - Comments. Follow lint recommendations. Add a doc.go file to annotate `go doc` results.
 
-## GRPC gotcha - form encoded data
+## GRPC issues - form encoded data, custom headers, etc
 
 The update with form data resource is problematic with grpc - by default, the grpc gateway does not support
 form encoded data with a POST request.
 
 I have added a form encoding wrapper to the HTTP mux to rewrite form encoded data to JSON to get around this.
 
+Likewise, the `api_key` header value is not passed through into the metadata by default, so I have
+added a simple function to `grpc.go` to pass through this custom header value.
 
 ## Tech Debt - XML Output
 
