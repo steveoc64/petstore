@@ -134,7 +134,7 @@ func TestDeletePet(t *testing.T) {
 	ctx := context.Background()
 
 	expectedErr := errors.New("400:Invalid API_KEY Supplied")
-	contextApiKey := "api_key"
+	contextAPIKey := "api_key"
 
 	// No api_key with valid pet == fail
 	_, err := petServer.DeletePet(ctx, &pb.PetID{PetId: 1})
@@ -143,20 +143,20 @@ func TestDeletePet(t *testing.T) {
 	}
 
 	// Invalid api_key with valid pet == fail
-	_, err = petServer.DeletePet(context.WithValue(ctx, contextApiKey, "ABCxxx"), &pb.PetID{PetId: 1})
+	_, err = petServer.DeletePet(context.WithValue(ctx, contextAPIKey, "ABCxxx"), &pb.PetID{PetId: 1})
 	if err.Error() != expectedErr.Error() {
 		t.Errorf("Delete pet with invalid key gets %#v, expecting %#v", err.Error(), expectedErr.Error())
 	}
 
 	// valid api_key with invalid pet == fail
 	expectedErr = errors.New("404:Pet not found 100")
-	_, err = petServer.DeletePet(context.WithValue(ctx, contextApiKey, testAPIKey), &pb.PetID{PetId: 100})
+	_, err = petServer.DeletePet(context.WithValue(ctx, contextAPIKey, testAPIKey), &pb.PetID{PetId: 100})
 	if err.Error() != expectedErr.Error() {
 		t.Errorf("Delete pet with valid key and invalid petID gets %#v, expecting %#v", err.Error(), expectedErr.Error())
 	}
 
 	// valid api key with valid pet == pass
-	_, err = petServer.DeletePet(context.WithValue(ctx, contextApiKey, testAPIKey), &pb.PetID{PetId: 1})
+	_, err = petServer.DeletePet(context.WithValue(ctx, contextAPIKey, testAPIKey), &pb.PetID{PetId: 1})
 	if err != nil {
 		t.Errorf("Delete pet with valid key and valid petID gets error %#v, expecting nil", err.Error())
 	}
@@ -173,7 +173,83 @@ func TestDeletePet(t *testing.T) {
 }
 
 func TestFindPetsByStatus(t *testing.T) {
+	t.Log(("Testing FindPetByStatus"))
 
+	db := testdb.New()
+	petServer := NewPetstoreServer(logrus.New(), db, testRPCPort, testRestPort, testAPIKey)
+	ctx := context.Background()
+
+	// set 2 to pending and 4 to sold
+	db.UpdatePetWithForm(ctx, 2, "", "pending")
+	db.UpdatePetWithForm(ctx, 4, "", "sold")
+
+	// Get all available - there should be 3
+	testStatus := "available"
+	avail, err := petServer.FindPetsByStatus(ctx, &pb.StatusReq{Status: []string{testStatus}})
+	if err != nil {
+		t.Errorf("Unexpected error getting available %#v", err.Error())
+	}
+	if len(avail.Pets) != 3 {
+		t.Errorf("Got %d avail, expecting 3", len(avail.Pets))
+	}
+	for _, v := range avail.Pets {
+		if v.Status != testStatus {
+			t.Errorf("Pet %d has status %v, expecting %s", v.Id, v.Status, testStatus)
+		}
+	}
+
+	// Get all the pending - there should be 1
+	testStatus = "pending"
+	pending, err := petServer.FindPetsByStatus(ctx, &pb.StatusReq{Status: []string{testStatus}})
+	if err != nil {
+		t.Errorf("Unexpected error getting pending %#v", err.Error())
+	}
+	if len(pending.Pets) != 1 {
+		t.Errorf("Got %d pending, expecting 1", len(pending.Pets))
+	}
+	for _, v := range pending.Pets {
+		if v.Status != testStatus {
+			t.Errorf("Pet %d has status %v, expecting %s", v.Id, v.Status, testStatus)
+		}
+	}
+
+	// Get all the sold - there should be 1
+	testStatus = "sold"
+	sold, err := petServer.FindPetsByStatus(ctx, &pb.StatusReq{Status: []string{testStatus}})
+	if err != nil {
+		t.Errorf("Unexpected error getting sold %#v", err.Error())
+	}
+	if len(sold.Pets) != 1 {
+		t.Errorf("Got %d sold, expecting 1", len(sold.Pets))
+	}
+	for _, v := range sold.Pets {
+		if v.Status != testStatus {
+			t.Errorf("Pet %d has status %v, expecting %s", v.Id, v.Status, testStatus)
+		}
+	}
+
+	// Get all that are in "pending" or "sold" - there should be 2
+	multi, err := petServer.FindPetsByStatus(ctx, &pb.StatusReq{Status: []string{"pending", "sold"}})
+	if err != nil {
+		t.Errorf("Unexpected error getting pending,sold %#v", err.Error())
+	}
+	if len(multi.Pets) != 2 {
+		t.Errorf("Got %d multi, expecting 2", len(multi.Pets))
+	}
+	for _, v := range multi.Pets {
+		if v.Status != "pending" && v.Status != "sold" {
+			t.Errorf("Pet %d has status %v, expecting pending or sold", v.Id, v.Status)
+		}
+	}
+
+	// test invalid status - should throw an error and return a nil pets struct
+	invalid, err := petServer.FindPetsByStatus(ctx, &pb.StatusReq{Status: []string{"pending", "INVALID"}})
+	if err == nil {
+		t.Error("Expected error getting pending,invalid")
+	}
+	if invalid != nil {
+		t.Errorf("Got %d non-nil invalid results, expecting empty/nil pets", len(invalid.Pets))
+	}
 }
 
 func TestUpdatePet(t *testing.T) {

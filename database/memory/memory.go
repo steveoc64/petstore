@@ -124,8 +124,11 @@ func (db *DB) FindPetsByStatus(ctx context.Context, statuses []string) (*pb.Pets
 	db.RLock()
 	defer db.RUnlock()
 	pets := &pb.Pets{}
-	for _, pet := range db.Pets {
-		for _, status := range statuses {
+	for _, status := range statuses {
+		if _, ok := pb.Status_value[status]; !ok {
+			return nil, fmt.Errorf("400:Invalid status %#v", status)
+		}
+		for _, pet := range db.Pets {
 			if strings.EqualFold(pet.Status, status) {
 				copy, err := db.clonePet(pet)
 				if err != nil {
