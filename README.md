@@ -143,7 +143,7 @@ provides that model. It could easily be mapped to Redis / Bolt / Mongo without m
 
 ## Design Decisions - Docker
 
-There are a LOT of different options when building a docker container, from including a full OS
+There are many different options when building a docker container, from including a full OS
 and building the app inside the container, through to a minimalist container. 
 
 I have chosen the minimalist approach with this project:
@@ -151,18 +151,20 @@ I have chosen the minimalist approach with this project:
 - The Go binary, being statically linked, is the only object needed in the container
 - The binary is named `entrypoint` in the container
 - To build the container, create a temp dir to place the contents in, and build from there
-- Set GOOS and GOARCH when building the entrypoint as the developer may be using something other
-than a linux box
+- Set GOOS and GOARCH when building the entrypoint
 - All runtime parameters are to be passed through using ENV vars in the docker container
 
 ## Misc Code Style Notes
 
 - Interfaces.  Defined at the consumer end, and used as input params. Avoid writing code that returns an interface
-wherever practical.
+wherever practical. eg - the `Database` interface is used by the `handler` .. so it is defined inside `handler`. The 
+individual database implementations do not need a reference interface defined at their level.
 - Errors. Either - return them, or log them and handle in line.  Dont do both.
 - Comments. Follow lint recommendations. Add a doc.go file to annotate `go doc` results.
 
 ## GRPC issues - form encoded data, custom headers, etc
+
+All of the custom grpc / rest code is in the `grpc.go` file.
 
 The update with form data resource is problematic with grpc - by default, the grpc gateway does not support
 form encoded data with a POST request.
@@ -200,7 +202,8 @@ For the sake of simplicity, I am implementing the PhotoURLs is a simple []string
 
 If a more complex structure is needed (map[string]somePhotoStruct ??), then its easy enough to change.
 
-I have not implemented a persistent storage mechanism for the image data inside the petstore microservice.
+I have not implemented a persistent storage mechanism for the image data inside the petstore microservice, 
+just the URLs to reference the images.
 
 In a real application, would decouple that storage entirely, so that the actual images would be stored
 in a separate service (AWS S3, etc).  Depending on how that is done, that would drive how the PhotoURLs
