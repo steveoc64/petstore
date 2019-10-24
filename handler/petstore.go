@@ -41,6 +41,6 @@ func NewPetstoreServer(log *logrus.Logger, db Database, rcpPort, restPort int, a
 // Run starts and runs the server
 func (s *PetstoreServer) Run() {
 	s.log.WithField("API_KEY", s.apiKey).Print("Petstore Start Run")
-	go s.rpcProxy()
+	go s.rpcProxy(s.log)
 	s.grpcRun()
 }

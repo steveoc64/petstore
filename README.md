@@ -222,13 +222,11 @@ For the sake of simplicity, I am implementing the PhotoURLs is a simple []string
 
 If a more complex structure is needed (map[string]somePhotoStruct ??), then its easy enough to change.
 
-I have not implemented a persistent storage mechanism for the image data inside the petstore microservice, 
-just the URLs to reference the images.
+For storage of the images - I am saving the uploaded file, unprocessed, in a temp directory inside the
+container, and then stamping the filename in the DB record.
 
-In a real application, would decouple that storage entirely, so that the actual images would be stored
-in a separate service (AWS S3, etc).  Depending on how that is done, that would drive how the PhotoURLs
-would look.
-
+In a real application, that temp dir could be mounted to a persistent volume, or written to some external
+key value store (AWS S3 / Google / etc)
 
 ## Tech Debt / TODO
 
@@ -278,9 +276,8 @@ handler/pets_test.go:159:31: should not use basic type string as key in context.
 
 Which I can get around easily by creating a non-basic string type, set it to `api_key` and then 
 pass this through. Doing this cleans up the linter output, but then causes the `apiKeyMatcher` 
-to break, since its assuming the input is a string.
-
-
+to break, since its assuming the input is a string. Would need more time to clean this up if
+its deemed important.
 
 ## Notes on out of scope possibilities with more code generation
 

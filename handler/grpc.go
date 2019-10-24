@@ -60,10 +60,9 @@ func (s *PetstoreServer) rpcProxy(log *logrus.Logger) error {
 
 	formWrapper := func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// handle incoming form data - rewrite it as JSON for grpc handling
 			contentType := strings.ToLower(strings.Split(r.Header.Get("Content-Type"), ";")[0])
 			switch contentType {
-			case "application/x-www-form-urlencoded":
+			case "application/x-www-form-urlencoded": // for POST /pet/{petID} with form data
 				if err := r.ParseForm(); err != nil {
 					log.WithFields(logrus.Fields{
 						"method":  r.Method,
@@ -88,7 +87,7 @@ func (s *PetstoreServer) rpcProxy(log *logrus.Logger) error {
 				r.Body = ioutil.NopCloser(bytes.NewReader(jsonBody))
 				r.ContentLength = int64(len(jsonBody))
 				r.Header.Set("Content-Type", "application/json")
-			case "multipart/form-data":
+			case "multipart/form-data": // for POST /pet/{pet_id}/uploadImage
 				// 4 MB image limit should do for now
 				if err := r.ParseMultipartForm(4 << 20); err != nil {
 					log.WithFields(logrus.Fields{
@@ -100,7 +99,7 @@ func (s *PetstoreServer) rpcProxy(log *logrus.Logger) error {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
 				}
-				file, handler, err := r.FormFile("file")
+				file, header, err := r.FormFile("file")
 				if err != nil {
 					log.WithFields(logrus.Fields{
 						"method":  r.Method,
@@ -111,44 +110,46 @@ func (s *PetstoreServer) rpcProxy(log *logrus.Logger) error {
 					return
 				}
 				defer file.Close()
-				//fmt.Printf("Uploaded File: %+v\n", handler.Filename)
-				//fmt.Printf("File Size: %+v\n", handler.Size)
-				//fmt.Printf("MIME Header: %+v\n", handler.Header)
 
-				tempFile, err := ioutil.TempFile("temp-images", "upload-*.png")
+				// TODO - scale the image down, convert to PNG, etc, etc
+				tempFile, err := ioutil.TempFile("photos", "upload-*.png")
 				if err != nil {
-					fmt.Println(err)
+					log.WithFields(logrus.Fields{
+						"method":  r.Method,
+						"url":     r.URL,
+						"browser": r.UserAgent(),
+						"ip":      r.RemoteAddr,
+					}).WithError(err).Error("Failed to create tempFile")
 				}
 				defer tempFile.Close()
 
-				// read all of the contents of our uploaded file into a
-				// byte array
 				fileBytes, err := ioutil.ReadAll(file)
 				if err != nil {
 					fmt.Println(err)
 				}
-				// write this byte array to our temporary file
 				tempFile.Write(fileBytes)
-				// return that we have successfully uploaded our file!
-				fmt.Fprintf(w, "Successfully Uploaded File\n")
-			default:
-				println("content type", contentType)
+
+				// Inject extra data into the request so grpc can pass it on to the handler
+				jsonMap := make(map[string]interface{}, len(r.Form))
+				jsonMap["file"] = tempFile.Name()
+				metaData := fmt.Sprintf("Size: %v; Content-Disposition: %v; Content-Type: %v",
+					header.Size,
+					header.Header.Get("Content-Disposition"),
+					header.Header.Get("Content-Type"),
+				)
+				jsonMap["additional_metadata"] = metaData
+				jsonBody, err := json.Marshal(jsonMap)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusBadRequest)
+				}
+
+				r.Body = ioutil.NopCloser(bytes.NewReader(jsonBody))
+				r.ContentLength = int64(len(jsonBody))
+				r.Header.Set("Content-Type", "application/json")
 			}
 			mux.ServeHTTP(w, r)
 		})
 	}
-
-	/*
-		// TODO - these elapsed timing metrics should be sent to a metrics
-		// service here ... replace logging code with metrics code
-		timingWrapper := func(h http.Handler) http.Handler {
-			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				t1 := time.Now()
-				mux.ServeHTTP(w, r)
-				s.log.WithField("elapsed", time.Since(t1).String()).Info("Call Duration")
-			})
-		}
-	*/
 
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	rpcendpoint := fmt.Sprintf(":%d", s.rpcPort)

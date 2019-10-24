@@ -145,6 +145,10 @@ func (db *DB) FindPetsByStatus(ctx context.Context, statuses []string) (*pb.Pets
 func (db *DB) UploadFile(ctx context.Context, id int64, filename string) error {
 	db.Lock()
 	db.Unlock()
-	// TODO - need some hacking to get this working with grpc
+	pet, ok := db.Pets[id]
+	if !ok {
+		return fmt.Errorf("404:Pet %d not found", id)
+	}
+	pet.PhotoUrls = append(pet.PhotoUrls, filename)
 	return nil
 }

@@ -6,9 +6,7 @@ generate:
 test:
 	ineffassign .
 	go vet ./...
-	golint ./...
 	go test ./...
-
 
 build: test
 	go build

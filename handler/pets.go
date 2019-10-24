@@ -124,6 +124,6 @@ func (s *PetstoreServer) UploadFile(ctx context.Context, req *pb.UploadFileReq) 
 	return &pb.ApiResponse{
 		Code:    11,
 		Type:    "type 11",
-		Message: "api success response of type 11",
+		Message: "api success response of type 11;" + req.AdditionalMetadata,
 	}, nil
 }
