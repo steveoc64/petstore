@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	pb "github.com/steveoc64/petstore/proto"
@@ -69,6 +68,7 @@ func (s *PetstoreServer) rpcProxy() error {
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 				}
+				fmt.Printf("JSON = %#v", string(jsonBody))
 
 				r.Body = ioutil.NopCloser(bytes.NewReader(jsonBody))
 				r.ContentLength = int64(len(jsonBody))
@@ -78,15 +78,17 @@ func (s *PetstoreServer) rpcProxy() error {
 		})
 	}
 
-	timingWrapper := func(h http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// TODO - these elapsed timing metrics should be sent to a metrics
-			// service here ... logging them to the logger for now
-			t1 := time.Now()
-			mux.ServeHTTP(w, r)
-			s.log.WithField("elapsed", time.Since(t1).String()).Info("Call Duration")
-		})
-	}
+	/*
+		timingWrapper := func(h http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// TODO - these elapsed timing metrics should be sent to a metrics
+				// service here ... logging them to the logger for now
+				t1 := time.Now()
+				mux.ServeHTTP(w, r)
+				s.log.WithField("elapsed", time.Since(t1).String()).Info("Call Duration")
+			})
+		}
+	*/
 
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	rpcendpoint := fmt.Sprintf(":%d", s.rpcPort)
@@ -97,7 +99,7 @@ func (s *PetstoreServer) rpcProxy() error {
 	}
 
 	s.log.WithField("endpoint", webendpoint).Println("Serving REST Proxy")
-	return http.ListenAndServe(webendpoint, timingWrapper(formWrapper(mux)))
+	return http.ListenAndServe(webendpoint, formWrapper(mux))
 }
 
 // apiKeyMatcher looks for the API_KEY in the header, and includes it in the grpc data

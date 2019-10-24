@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"google.golang.org/grpc/metadata"
-
 	"github.com/sirupsen/logrus"
 
 	pb "github.com/steveoc64/petstore/proto"
@@ -65,15 +63,11 @@ func (s *PetstoreServer) AddPet(ctx context.Context, req *pb.Pet) (*pb.Pet, erro
 }
 
 // DeletePet removes a pet. Check the req header for the API_KEY value
-func (s *PetstoreServer) DeletePet(ctx context.Context, req *pb.DeletePetReq) (*pb.Empty, error) {
+func (s *PetstoreServer) DeletePet(ctx context.Context, req *pb.PetID) (*pb.Empty, error) {
 	// get the passed in APIKey and validate first
-	var apiKey string
-	if headers, ok := metadata.FromIncomingContext(ctx); ok {
-		apiKeys := headers["api_key"]
-		if len(apiKeys) < 1 || apiKeys[0] != s.apiKey {
-			return nil, fmt.Errorf("400:Invalid API_KEY Supplied")
-		}
-		apiKey = apiKeys[0]
+	apiKey := ctx.Value("api_key")
+	if apiKey != s.apiKey {
+		return nil, fmt.Errorf("400:Invalid API_KEY Supplied")
 	}
 	s.log.WithFields(logrus.Fields{
 		"id":      req.PetId,

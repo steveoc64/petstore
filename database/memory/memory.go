@@ -63,12 +63,21 @@ func (db *DB) UpdatePetWithForm(ctx context.Context, id int64, name string, stat
 	if !ok {
 		return fmt.Errorf("405:No Pet %d to update", id)
 	}
-	status = strings.ToLower(status)
-	if _, ok := pb.Status_value[status]; !ok {
-		return fmt.Errorf("405:Invalid status value %#v", status)
+
+	// NOTE - both name and status are not required fields, so gracefully handle
+	// empty input in either of these ase meaning
+	// "dont update the field if the input wasnt entered"
+	if name != "" {
+		pet.Name = name
 	}
-	pet.Name = name
-	pet.Status = status
+
+	if status != "" {
+		status = strings.ToLower(status)
+		if _, ok := pb.Status_value[status]; !ok {
+			return fmt.Errorf("405:Invalid status value %#v", status)
+		}
+		pet.Status = status
+	}
 	return nil
 }
 

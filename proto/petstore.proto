@@ -5,7 +5,7 @@ import "google/api/annotations.proto";
 service PetstoreService {
     rpc GetPetByID(PetID) returns (Pet) {};
     rpc UpdatePetWithForm(UpdatePetWithFormReq) returns (Empty) {};
-    rpc DeletePet(DeletePetReq) returns (Empty) {};
+    rpc DeletePet(PetID) returns (Empty) {};
     rpc UploadFile(UploadFileReq) returns (ApiResponse) {};
     rpc AddPet(Pet) returns (Pet) {};
     rpc UpdatePet(Pet) returns (Pet) {};
@@ -47,11 +47,6 @@ message UpdatePetWithFormReq {
     int64 pet_id = 1;
     string name = 2;
     string status = 3;
-}
-
-message DeletePetReq {
-    // Note - api_key is passed in via a header, you will find it in the ctx metadata
-    int64 pet_id = 1;
 }
 
 message UploadFileReq {

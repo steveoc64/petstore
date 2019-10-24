@@ -156,7 +156,7 @@ func local_request_PetstoreService_UpdatePetWithForm_0(ctx context.Context, mars
 }
 
 func request_PetstoreService_DeletePet_0(ctx context.Context, marshaler runtime.Marshaler, client PetstoreServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeletePetReq
+	var protoReq PetID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -183,7 +183,7 @@ func request_PetstoreService_DeletePet_0(ctx context.Context, marshaler runtime.
 }
 
 func local_request_PetstoreService_DeletePet_0(ctx context.Context, marshaler runtime.Marshaler, server PetstoreServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeletePetReq
+	var protoReq PetID
 	var metadata runtime.ServerMetadata
 
 	var (

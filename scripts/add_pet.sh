@@ -11,3 +11,5 @@ curl -v -X POST "localhost:8080/pet" \
     \"photoUrls\":[\"myphotos.com/1234.jpg\"], \
     \"tags\":[{\"id\":1,\"name\":\"housetrained\"},{\"id\":2,\"name\":\"Likes Kids\"}], \
     \"status\":\"available\"}"
+
+echo
