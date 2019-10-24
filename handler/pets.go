@@ -43,23 +43,16 @@ func (s *PetstoreServer) UpdatePetWithForm(ctx context.Context, req *pb.UpdatePe
 // AddPet adds a pet to the store
 func (s *PetstoreServer) AddPet(ctx context.Context, req *pb.Pet) (*pb.Pet, error) {
 	s.log.WithFields(logrus.Fields{
-		"id":   req.PetId,
+		"id":   req.Id,
 		"name": req.Name,
 	}).Info("AddPet")
 
-	// We are accepting plain JSON here - so unmarshal it into a Pet struct
-	//pet := &pb.Pet{}
-	//if err := json.Unmarshal([]byte(req.Body), pet); err != nil {
-	//s.log.WithField("body", req.Body).WithError(err).Error("Unmarshal body error")
-	//return nil, errors.New("405:Invalid Input")
-	//}
 	pet := req
-
 	err := s.db.AddPet(ctx, pet)
 	if err != nil {
 		return nil, err
 	}
-	return s.db.GetPetByID(ctx, req.PetId)
+	return s.db.GetPetByID(ctx, req.Id)
 }
 
 // DeletePet removes a pet. Check the req header for the API_KEY value
@@ -85,14 +78,24 @@ func (s *PetstoreServer) FindPetsByStatus(ctx context.Context, req *pb.StatusReq
 
 // UpdatePet updates a pet from the input data
 func (s *PetstoreServer) UpdatePet(ctx context.Context, req *pb.Pet) (*pb.Pet, error) {
-	s.log.WithField("id", req.PetId).Info("UpdatePet")
-	err := s.db.UpdatePet(ctx, req)
-	if err != nil {
-		return nil, err
+	s.log.WithField("id", req.Id).Info("UpdatePet")
+	// In the SwaggerAPI example, if you enter a pet with ID 0, then it
+	// creates a new pet and returns 200.  We will do the same here
+	if req.Id == 0 {
+		err := s.db.AddPet(ctx, req)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err := s.db.UpdatePet(ctx, req)
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	// In the swaggerAPI example, calling this REST endpoint returns the updated pet details
 	// we do the same here
-	return s.db.GetPetByID(ctx, req.PetId)
+	return s.db.GetPetByID(ctx, req.Id)
 }
 
 // UploadFile uploads a photo against a pet

@@ -15,7 +15,7 @@ func New() *memory.DB {
 	for _, v := range []int{1, 2, 3, 4, 5} {
 		i := int64(v)
 		db.Pets[i] = &pb.Pet{
-			PetId: i,
+			Id: i,
 			Category: &pb.Category{
 				Id:   1,
 				Name: "dog",

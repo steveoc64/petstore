@@ -79,10 +79,10 @@ func (s *PetstoreServer) rpcProxy() error {
 	}
 
 	/*
+		// TODO - these elapsed timing metrics should be sent to a metrics
+		// service here ... replace logging code with metrics code
 		timingWrapper := func(h http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// TODO - these elapsed timing metrics should be sent to a metrics
-				// service here ... logging them to the logger for now
 				t1 := time.Now()
 				mux.ServeHTTP(w, r)
 				s.log.WithField("elapsed", time.Since(t1).String()).Info("Call Duration")

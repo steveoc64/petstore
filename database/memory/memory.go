@@ -97,30 +97,25 @@ func (db *DB) AddPet(ctx context.Context, pet *pb.Pet) error {
 	db.Lock()
 	defer db.Unlock()
 	// If the PetID is not specified, use an auto-increment
-	if pet.PetId == 0 {
-		pet.PetId = int64(len(db.Pets) + 1)
+	if pet.Id == 0 {
+		pet.Id = int64(len(db.Pets) + 1)
 	}
-	if _, ok := db.Pets[pet.PetId]; ok {
-		return fmt.Errorf("405:Pet already exists %d", pet.PetId)
+	if _, ok := db.Pets[pet.Id]; ok {
+		return fmt.Errorf("405:Pet already exists %d", pet.Id)
 	}
-	db.Pets[pet.PetId] = pet
+	db.Pets[pet.Id] = pet
 	return nil
 }
 
-// UpdatePet to the new contents
+// UpdatePet to the new contents, or create a new pet if the ID is not specified
 func (db *DB) UpdatePet(ctx context.Context, pet *pb.Pet) error {
 	db.Lock()
 	defer db.Unlock()
-	// In the SwaggerAPI example, if you enter a pet with ID 0, then it
-	// creates a new pet and returns 200.  We will do the same here
-	if pet.PetId == 0 {
-		return db.AddPet(ctx, pet)
-	}
 	// if the petID does not exist, then 404
-	if _, ok := db.Pets[pet.PetId]; !ok {
-		return fmt.Errorf("404:Pet %d not found", pet.PetId)
+	if _, ok := db.Pets[pet.Id]; !ok {
+		return fmt.Errorf("404:Pet %d not found", pet.Id)
 	}
-	db.Pets[pet.PetId] = pet
+	db.Pets[pet.Id] = pet
 	return nil
 }
 

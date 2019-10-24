@@ -58,16 +58,16 @@ func (db *DB) UpdatePetWithForm(ctx context.Context, id int64, name string, stat
 // AddPet adds a pet to the database, unless it already exists or is invalid
 func (db *DB) AddPet(ctx context.Context, pet *pb.Pet) error {
 	// If the PetID is not specified, use an auto-increment
-	if pet.PetId == 0 {
+	if pet.Id == 0 {
 		_, err := db.sql.ExecContext(ctx, "insert into pets (...everything but the id) values (...)")
 		return err
 	}
 	var count int
-	if err := db.sql.SelectContext(ctx, &count, "select count(*) from pets where id=$1", pet.PetId); err != nil {
+	if err := db.sql.SelectContext(ctx, &count, "select count(*) from pets where id=$1", pet.Id); err != nil {
 		return err
 	}
 	if count == 1 {
-		return fmt.Errorf("405:Pet already exists %d", pet.PetId)
+		return fmt.Errorf("405:Pet already exists %d", pet.Id)
 	}
 
 	_, err := db.sql.NamedExecContext(ctx, "insert into pets (...) values (...)", pet)
@@ -93,21 +93,16 @@ func (db *DB) DeletePet(ctx context.Context, id int64) error {
 
 // UpdatePet to the new contents
 func (db *DB) UpdatePet(ctx context.Context, pet *pb.Pet) error {
-	// In the SwaggerAPI example, if you enter a pet with ID 0, then it
-	// creates a new pet and returns 200.  We will do the same here
-	if pet.PetId == 0 {
-		return db.AddPet(ctx, pet)
-	}
 	// if the petID does not exist, then 404
 	var count int
-	err := db.sql.SelectContext(ctx, &count, "select count(*) from pets where id=$1", pet.PetId)
+	err := db.sql.SelectContext(ctx, &count, "select count(*) from pets where id=$1", pet.Id)
 	if err != nil {
 		return err
 	}
 	if count == 0 {
-		return fmt.Errorf("404:Pet %d not found", pet.PetId)
+		return fmt.Errorf("404:Pet %d not found", pet.Id)
 	}
-	_, err = db.sql.ExecContext(ctx, "delete from pets where id=$1", pet.PetId)
+	_, err = db.sql.ExecContext(ctx, "delete from pets where id=$1", pet.Id)
 	return err
 }
 

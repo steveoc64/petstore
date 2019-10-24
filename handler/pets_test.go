@@ -31,8 +31,8 @@ func TestGetPetByID(t *testing.T) {
 		if err != nil {
 			t.Error("GetPetByID 1 unexpected error", err.Error())
 		}
-		if pet.PetId != v {
-			t.Errorf("GetPetByID got ID %v, expected %v", pet.PetId, v)
+		if pet.Id != v {
+			t.Errorf("GetPetByID got ID %v, expected %v", pet.Id, v)
 		}
 		expectedName := fmt.Sprintf("Pet number %d", v)
 		if pet.Name != expectedName {
@@ -91,7 +91,7 @@ func TestAddPet(t *testing.T) {
 	// Add a new pet
 	newName := "My New Dog"
 	newPet, err := petServer.AddPet(ctx, &pb.Pet{
-		PetId: 0,
+		Id: 0,
 		Category: &pb.Category{
 			Id:   1,
 			Name: "dog",
@@ -116,9 +116,9 @@ func TestAddPet(t *testing.T) {
 		return
 	}
 
-	t.Logf("Created new pet with ID of %#v", newPet.PetId)
-	if newPet.PetId != 6 {
-		t.Errorf("New PetID %#v, want 6", newPet.PetId)
+	t.Logf("Created new pet with ID of %#v", newPet.Id)
+	if newPet.Id != 6 {
+		t.Errorf("New PetID %#v, want 6", newPet.Id)
 		return
 	}
 
@@ -176,7 +176,62 @@ func TestFindPetsByStatus(t *testing.T) {
 }
 
 func TestUpdatePet(t *testing.T) {
+	t.Log(("Testing DeletePet"))
 
+	db := testdb.New()
+	petServer := NewPetstoreServer(logrus.New(), db, testRPCPort, testRestPort, testAPIKey)
+	ctx := context.Background()
+
+	// get pet 1
+	pet1, err := db.GetPetByID(ctx, 1)
+
+	// Update pet 1
+	myPet := &pb.Pet{
+		Id: 1,
+		Category: &pb.Category{
+			Id:   1,
+			Name: "dog",
+		},
+		Name:      "test dog",
+		PhotoUrls: []string{"photos/test1.jpg"},
+		Tags: []*pb.Tag{
+			&pb.Tag{
+				Id:   1,
+				Name: "housetrained",
+			},
+		},
+		Status: "available",
+	}
+
+	pet, err := petServer.UpdatePet(ctx, myPet)
+	if err != nil {
+		t.Errorf("Updating pet 1 gets unexpected error %#v", err.Error())
+	}
+	if pet.Name != myPet.Name {
+		t.Errorf("Updated pet returns with a name of %#v, expecting %#v", pet.Name, myPet.Name)
+	}
+	if pet.Id != 1 {
+		t.Errorf("Updated pet returns with an ID of %#v, expecting 1", pet.Id)
+	}
+
+	// now get pet1 again, and confirm that its changed
+	pet1updated, err := db.GetPetByID(ctx, 1)
+	if pet1updated.Name != myPet.Name {
+		t.Errorf("Updated pet1 (old name %#v) has new name %#v, expecting %#v", pet1.Name, pet1updated.Name, myPet.Name)
+	}
+
+	// Now update again, with ID = 0, and observe that it inserts a new one
+	myPet.Id = 0
+	pet, err = petServer.UpdatePet(ctx, myPet)
+	if err != nil {
+		t.Errorf("Updating new pet 0 gets unexpected error %#v", err.Error())
+	}
+	if pet.Name != myPet.Name {
+		t.Errorf("Updated new pet returns with a name of %#v, expecting %#v", pet.Name, myPet.Name)
+	}
+	if pet.Id != 6 {
+		t.Errorf("Updated new pet returns with an ID of %#v, expecting 6", pet.Id)
+	}
 }
 
 func TestUploadFile(t *testing.T) {

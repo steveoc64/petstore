@@ -61,12 +61,18 @@ equivalent REST tools using https://github.com/grpc-ecosystem/grpc-gateway
 Benefits of using gRPC for this Microservice :
 
 - End result is callable from both REST and RPC
-- Use of protobufs applies a layer of validation and control
-- End result is easier to change as requirements change, as the protobuf and rpc definitions
-are in 1 place, and should align with the swagger API definition.
-- Adding RPC support provides a more efficient means of communicating between services
-without the need to exersize REST endpoints and JSON marshalling.
-- End result is easier to test compared to REST calls using a pure web framework.
+- Simple protobuf definition files align with the swagger API definition.
+- Use of protobufs applies strong type and validation support. JSON payloads are automatically
+converted into Go types before they hit the handler code.
+- Inter-Service communication using binary formats instead of REST + JSON marshalling.
+- Easier to test.
+
+Downsides :
+
+- It is an extra layer of complexity.
+- Learning curve can be steep.
+- Default grpc-gateway behaviour may not align with the desired API spec, so may require
+some custom code. (as is indeed the case with this API).
 
 ## Design Decisions - Tools
 
